@@ -1,0 +1,152 @@
+.checkout-cart-index .cart .page-title {
+    background: #c8d4cd;
+    padding: 50px 0;
+    margin-bottom: 20px;
+}
+.checkout-cart-index .cart .page-title h1 {
+    font-size: 40px;
+    margin: 0 0 20px 0;
+    color: #000;
+}
+.checkout-cart-index .cart .page-title .assistance-container, .checkout-cart-index .cart .page-title .cart-empty {
+    font-size: 16px;
+    color: #000;
+}
+.checkout-cart-index .cart .page-title .continue-container {
+    text-align: right;
+}
+.checkout-cart-index .cart .page-title .continue-container .button {
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+.checkout-cart-index .cart .page-title .button {
+    border: 1px solid #fff;
+}
+.checkout-cart-index .cart .page-title .continue-container .button+.button {
+    margin-left: 10px;
+}
+.checkout-cart-index .cart .cart-subtitle {
+    text-transform: capitalize;
+    font-size: 18px;
+    line-height: 26px;
+    color: #7c878e;
+    padding: 15px 0;
+    margin: 0;
+    border-bottom: 1px solid #eeefef;
+}
+.checkout-cart-index .cart .cart-collaterals .totals {
+    background: #eeefef;
+    border-radius: 4px;
+    padding: 30px 15px;
+    color: #14328c;
+    margin-bottom: 20px;
+}
+.checkout-cart-index .cart .cart-collaterals .totals #shopping-cart-totals-table {
+    font-size: 16px;
+    width: 100%;
+}
+.checkout-cart-index .cart .cart-collaterals .totals #shopping-cart-totals-table .grand-total {
+    font-size: 18px;
+}
+.checkout-cart-index .cart .cart-collaterals .totals #shopping-cart-totals-table .grand-total td {
+    padding-top: 20px;
+}
+.checkout-cart-index .cart .cart-collaterals .totals #shopping-cart-totals-table .a-left {
+    text-align: left;
+}
+.checkout-cart-index .cart .cart-collaterals .totals #shopping-cart-totals-table .grand-total td strong {
+    font-weight: 400;
+}
+.checkout-cart-index .cart .cart-collaterals .totals #shopping-cart-totals-table .a-right {
+    text-align: right;
+}
+.checkout-cart-index .cart .cart-collaterals .checkout-types-container .checkout-types {
+    margin: 0 0 20px 0;
+}
+.checkout-cart-index .cart .cart-collaterals .checkout-types-container .checkout-types {
+    margin-bottom: 0;
+    padding-left: 0;
+    text-indent: 0;
+    list-style: none;
+}
+.checkout-cart-index .cart .cart-collaterals .checkout-types-container .checkout-types li {
+    margin: 20px 0;
+    padding: 0;
+}
+.checkout-cart-index .cart .cart-collaterals .checkout-types-container .checkout-types li {
+    padding-left: 0;
+    font-weight: 500;
+}
+.checkout-cart-index .cart .cart-collaterals .checkout-types-container .checkout-types li .button {
+    color: #000;
+    background-color: #d9ebef;
+    border: 1px solid #d9ebef;
+    font-weight: 400;
+    transition: .2s ease-out;
+    position: relative;
+    /*padding-right: 72px;*/
+    display: block;
+    width: 100%;
+}
+ul li:before {
+    position: absolute;
+    top: 9px;
+    left: 0;
+    content: "";
+    background-color: #fff;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+.product-table .product .product-name {
+    font-size: 16px;
+    font-weight: 400;
+    margin: 0;
+}
+.product-table .product .product-name .out-of-stock {
+    color: red;
+    font-size: 14px;
+    font-weight: 400;
+    margin: 0;
+}
+.product-table .product .btn-remove {
+    padding: 5px 10px;
+    border: 1px solid #d9ebef;
+    border-radius: 4px;
+}
+.table td {
+    padding:10px;
+    font-size: 16px;
+    font-weight: 400;
+}
+.input-text {
+    display: block;
+    width: 100%;
+    background-image: none;
+    outline: 0;
+    padding: 5px;
+    font-size: 16px;
+    border: 1px solid #c3c5c8;
+    border-radius: 4px;
+    color: #7c878e;
+    background-color: #fff;
+    font-weight: 400;
+    transition: .3s ease-out;
+    -webkit-appearance: none;
+}
+.cart-qty-container {
+    text-align: center;
+}
+.cart-qty input {
+    width: 40px;
+    text-align: center;
+    margin: 0 8px;
+    color: #14328c;
+}
+.cart-qty {
+    margin-bottom: 10px;
+}
+.product-table .product-image-wrapper img {
+    width:auto;
+    height:100px;
+}

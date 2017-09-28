@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="login">
+    
+    <select id="loginContent" parameterType="hashmap" resultType="hashmap">
+        <![CDATA[
+            SELECT *
+              FROM my_contents
+             WHERE contents_id = #{contents_id}
+               AND language_id = #{language_id}
+        ]]>
+    </select>
+    
+    <select id="login" parameterType="hashmap" resultType="myhome.common.dto.CustomerDTO">
+        <![CDATA[
+            SELECT *
+              FROM dr_customer
+             WHERE email = #{email}
+        ]]>
+    </select>
+    
+    <select id="customer" parameterType="String" resultType="myhome.common.dto.CustomerDTO">
+        <![CDATA[
+            SELECT *
+              FROM dr_customer
+             WHERE customer_id = #{value}
+        ]]>
+    </select>
+    
+    <select id="loginByCode" parameterType="hashmap" resultType="myhome.common.dto.CustomerDTO">
+        <![CDATA[
+            SELECT *
+              FROM dr_customer
+             WHERE code = #{code}
+        ]]>
+    </select>
+    
+    <insert id="addCustomer" parameterType="hashmap" useGeneratedKeys="true" keyProperty="customer_id">
+        <![CDATA[
+            INSERT INTO dr_customer (customer_group_id, store_id, language_id, customer_name, firstname, lastname, email, telephone, password, ip, status, approved, safe, date_added, join_path_id, join_path_etc, myhomedoc)
+            VALUES
+            (
+                #{customer_group_id}, 
+                #{store_id},
+                #{language_id},
+                #{customer_name},
+                #{firstname}, 
+                #{lastname},
+                #{email},
+                #{telephone}, 
+                #{password},
+                #{ip},
+                #{status}, 
+                #{approved},
+                #{safe},
+                NOW(),
+                #{join_path_id},
+                #{join_path_etc},
+                #{myhomedoc}
+            )
+        ]]>
+    </insert>
+    
+    <select id="checkCustomerGroupReward" parameterType="hashmap" resultType="hashmap">
+        <![CDATA[
+            SELECT cgd.customer_group_id,
+                   cgd.name,
+                   cgd.reward
+              FROM dr_customer_group_description cgd LEFT JOIN dr_customer_group_reward cgr ON cgd.customer_group_id = cgr.customer_group_id
+             WHERE cgr.email = #{email}
+        ]]>
+    </select>
+    
+    <select id="customerGroupName" parameterType="hashmap" resultType="hashmap">
+        <![CDATA[
+            SELECT name
+              FROM dr_customer_group_description
+             WHERE customer_group_id = #{customer_group_id}
+               AND language_id = #{language_id}
+        ]]>
+    </select>
+    
+    <select id="joinPathName" parameterType="hashmap" resultType="hashmap">
+        <![CDATA[
+            SELECT *
+              FROM dr_customer_join_path
+             WHERE join_path_id = #{join_path_id}
+               AND language_id = #{language_id}
+        ]]>
+    </select>
+    
+    <insert id="addCustomerLogin" parameterType="hashmap">
+        INSERT INTO dr_customer_login (customer_id, ip, date_added)
+        VALUES
+        (
+            #{customer_id}, 
+            #{ip},
+            NOW()
+        )
+    </insert>
+</mapper>

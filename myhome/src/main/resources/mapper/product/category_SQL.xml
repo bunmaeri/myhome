@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="category">
+    
+    <select id="categoryInfo" parameterType="hashmap" resultType="hashmap">
+        <![CDATA[
+            SELECT c.category_id,
+                   c.image,
+                   c.parent_id,
+                   c.top,
+                   c.sort_order,
+                   cd.name,
+                   cd.description,
+                   cd.meta_title,
+                   cd.meta_description,
+                   cd.meta_keyword
+              FROM my_category c LEFT JOIN my_category_description cd ON (c.category_id = cd.category_id)
+             WHERE c.category_id = #{category_id}
+               AND c.status = '1'
+        ]]>
+    </select>
+    
+    <select id="subCategory" parameterType="hashmap" resultType="hashmap">
+        <![CDATA[
+            SELECT c.category_id,
+                   cd.name
+              FROM my_category c LEFT JOIN my_category_description cd ON (c.category_id = cd.category_id)
+             WHERE c.parent_id = #{category_id}
+               AND c.status = '1'
+             ORDER BY c.sort_order
+        ]]>
+    </select>
+
+    <select id="categoryProductTotal" parameterType="hashmap" resultType="int">
+        SELECT COUNT(*) AS total_cnt
+          FROM my_product_to_category ptc, my_product p, my_product_description pd
+         WHERE ptc.product_id = p.product_id
+           AND p.product_id = pd.product_id
+           AND ptc.category_id = #{category_id}
+           AND p.status = 1
+    </select>
+    
+    <select id="categoryProduct" parameterType="hashmap" resultType="hashmap">
+        <include refid="common.pagingPre"/> 
+        <![CDATA[
+            SELECT p.product_id,
+                   p.model,
+                   p.stock_status_id,
+                   p.image,
+                   p.price,
+                  (SELECT ps.price FROM my_product_special ps WHERE ps.product_id = p.product_id AND ps.customer_group_id IN('0',#{customer_group_id}) AND ((ps.date_start = '0000-00-00' OR ps.date_start < NOW()) AND (ps.date_end = '0000-00-00' OR ps.date_end > NOW())) ORDER BY ps.priority ASC, ps.price ASC LIMIT 1) AS special,
+                   pd.name
+              FROM my_product_to_category ptc, my_product p, my_product_description pd
+             WHERE ptc.product_id = p.product_id
+               AND p.product_id = pd.product_id
+               AND ptc.category_id = #{category_id}
+               AND p.status = 1
+             ORDER BY LCASE(pd.name) ASC
+        ]]>
+        <include refid="common.pagingSub"/> 
+    </select>
+</mapper>

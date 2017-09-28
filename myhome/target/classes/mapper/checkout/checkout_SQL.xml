@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="checkout">
+    
+    <select id="geoZone" parameterType="hashmap" resultType="hashmap">
+        SELECT gz.geo_zone_id,
+               gz.name,
+               gz.description,
+               ztgz.zone_to_geo_zone_id,
+               ztgz.country_id,
+               ztgz.zone_id
+          FROM dr_address a, dr_geo_zone gz, dr_zone_to_geo_zone ztgz
+         WHERE a.country_id = ztgz.country_id
+           AND gz.geo_zone_id = ztgz.geo_zone_id
+           AND a.address_id = #{address_id}
+    </select>
+    
+    <select id="countryInfo" parameterType="hashmap" resultType="hashmap">
+        SELECT *
+          FROM dr_country
+         WHERE country_id = #{country_id}
+           AND status = '1'
+    </select>
+    
+    <select id="fedexZoneInfo" parameterType="hashmap" resultType="hashmap">
+        SELECT *
+          FROM dr_zone
+         WHERE zone_id = #{zone_id}
+           AND status = '1'
+    </select>
+    
+    <select id="rewardTotal" parameterType="hashmap" resultType="String">
+        SELECT SUM(points) AS total
+          FROM dr_customer_reward
+         WHERE customer_id = #{value}
+    </select>
+    
+    <select id="weightShippingCost" parameterType="String" resultType="String">
+        SELECT price
+          FROM dr_weight_shipping
+        <![CDATA[
+          WHERE weight >= #{value}
+        ]]>
+          ORDER BY weight ASC
+          LIMIT 0,1
+    </select>
+    
+    <select id="getSortOrder" resultType="hashmap">
+        SELECT *
+          FROM dr_order_total_sort
+         ORDER BY sort_order ASC
+    </select>
+    
+    <select id="caclSalesTax" parameterType="hashmap" resultType="hashmap">
+        SELECT ROUND((#{sub_total} * rate / 100),2) AS sales_tax,
+               rate
+          FROM dr_tax_rate
+         WHERE geo_zone_id = #{geo_zone_id}
+    </select>
+    
+    <delete id="deleteCartOrderTotal" parameterType="String">
+        <![CDATA[
+            DELETE FROM my_cart_order_total 
+             WHERE customer_id = #{value}
+        ]]>
+    </delete>
+    
+    <delete id="deleteCartOrderTotalByCode" parameterType="hashmap">
+        <![CDATA[
+            DELETE FROM my_cart_order_total 
+             WHERE customer_id = #{customer_id}
+               AND code = #{code}
+        ]]>
+    </delete>
+    
+    <insert id="addCartOrderTotal" parameterType="hashmap">
+        <![CDATA[
+            INSERT INTO my_cart_order_total(customer_id, code, title, value, sort_order)
+            VALUES
+            (
+                #{customer_id},
+                #{code},
+                #{title},
+                #{value},
+                #{sort_order}
+            ) ON DUPLICATE KEY UPDATE value=#{value}
+        ]]>
+    </insert>
+    
+    <insert id="addCartOrderTotalTotal" parameterType="hashmap">
+        <![CDATA[
+            INSERT INTO my_cart_order_total(customer_id, code, title, value, sort_order)
+            VALUES
+            (
+                #{customer_id},
+                #{code},
+                #{title},
+               (SELECT IFNULL(SUM(s.value),0) FROM my_cart_order_total s WHERE customer_id=#{customer_id}),
+                #{sort_order}
+            ) ON DUPLICATE KEY UPDATE value=(SELECT IFNULL(SUM(s.value),0) FROM my_cart_order_total s WHERE customer_id=#{customer_id} AND code!=#{code})
+        ]]>
+    </insert>
+    
+    <select id="cartOrderTotalList" parameterType="String" resultType="hashmap">
+        SELECT *
+          FROM my_cart_order_total
+         WHERE customer_id = #{value}
+         ORDER BY sort_order ASC
+    </select>
+    
+    <select id="cartOrderTotalAmount" parameterType="String" resultType="String">
+        SELECT `value`
+          FROM my_cart_order_total
+         WHERE customer_id = #{value}
+           AND code = 'total'
+    </select>
+    
+    <insert id="createOrderId" parameterType="hashmap" useGeneratedKeys="true" keyProperty="order_id"  keyColumn="order_id">
+        INSERT INTO my_order_id(date_added)
+        VALUES (NOW() )
+        <selectKey keyProperty="order_id" resultType="String" order="AFTER">
+          SELECT LAST_INSERT_ID();
+        </selectKey>
+    </insert>
+    
+    <insert id="addOrder" parameterType="hashmap">
+        INSERT INTO dr_order(order_id, invoice_no, invoice_prefix, store_id, store_name, store_url, customer_id, customer_group_id, customer_name, firstname, lastname, email, telephone, fax, 
+                             payment_customer_name, payment_firstname, payment_lastname, payment_company, payment_address_1, payment_address_2, payment_city, payment_postcode, payment_country, payment_country_id, payment_zone, payment_zone_id, payment_method, payment_code, payment_telephone, payment_requisition_id, payment_address_id,
+                             shipping_customer_name, shipping_firstname, shipping_lastname, shipping_company, shipping_address_1, shipping_address_2, shipping_city, shipping_postcode, shipping_country, shipping_country_id, shipping_zone, shipping_zone_id, shipping_method, shipping_code, shipping_telephone, requisition_id, shipping_address_id,
+                             comment, total, order_status_id, affiliate_id, commission, marketing_id, language_id, currency_id, currency_code, currency_value, carrier_id, shippingfee_type, ip, user_agent, accept_language, date_added, date_modified)
+        VALUES
+        (
+            #{order_id},
+            #{invoice_no},
+            #{invoice_prefix},
+            #{store_id},
+            #{store_name},
+            #{store_url},
+            #{customer_id},
+            #{customer_group_id},
+            #{customer_name},
+            #{firstname},
+            #{lastname},
+            #{email},
+            #{telephone},
+            #{fax},
+            #{payment_customer_name},
+            #{payment_firstname},
+            #{payment_lastname},
+            #{payment_company},
+            #{payment_address_1},
+            #{payment_address_2},
+            #{payment_city},
+            #{payment_postcode},
+            #{payment_country},
+            #{payment_country_id},
+            #{payment_zone},
+            #{payment_zone_id},
+            #{payment_method},
+            #{payment_code},
+            #{payment_telephone},
+            #{payment_requisition_id},
+            #{payment_address_id},
+            #{shipping_customer_name},
+            #{shipping_firstname},
+            #{shipping_lastname},
+            #{shipping_company},
+            #{shipping_address_1},
+            #{shipping_address_2},
+            #{shipping_city},
+            #{shipping_postcode},
+            #{shipping_country},
+            #{shipping_country_id},
+            #{shipping_zone},
+            #{shipping_zone_id},
+            #{shipping_method},
+            #{shipping_code},
+            #{shipping_telephone},
+            #{requisition_id},
+            #{shipping_address_id},
+            #{comment},
+            #{total},
+            #{order_status_id},
+            #{affiliate_id},
+            #{commission},
+            #{marketing_id},
+            #{language_id},
+            #{currency_id},
+            #{currency_code},
+            #{currency_value},
+            #{carrier_id},
+            #{shippingfee_type},
+            #{ip},
+            #{user_agent},
+            #{accept_language},
+            NOW(),
+            NOW()
+        )
+    </insert>
+    
+    <!-- <insert id="addOrder" parameterType="hashmap" useGeneratedKeys="true" keyProperty="order_id"  keyColumn="order_id">
+        INSERT INTO dr_order(invoice_no, invoice_prefix, store_id, store_name, store_url, customer_id, customer_group_id, customer_name, firstname, lastname, email, telephone, fax, 
+                             payment_customer_name, payment_firstname, payment_lastname, payment_company, payment_address_1, payment_address_2, payment_city, payment_postcode, payment_country, payment_country_id, payment_zone, payment_zone_id, payment_method, payment_code, payment_telephone, payment_requisition_id, payment_address_id,
+                             shipping_customer_name, shipping_firstname, shipping_lastname, shipping_company, shipping_address_1, shipping_address_2, shipping_city, shipping_postcode, shipping_country, shipping_country_id, shipping_zone, shipping_zone_id, shipping_method, shipping_code, shipping_telephone, requisition_id, shipping_address_id,
+                             comment, total, order_status_id, affiliate_id, commission, marketing_id, language_id, currency_id, currency_code, currency_value, carrier_id, shippingfee_type, ip, user_agent, accept_language, date_added, date_modified)
+        VALUES
+        (
+            #{invoice_no},
+            #{invoice_prefix},
+            #{store_id},
+            #{store_name},
+            #{store_url},
+            #{customer_id},
+            #{customer_group_id},
+            #{customer_name},
+            #{firstname},
+            #{lastname},
+            #{email},
+            #{telephone},
+            #{fax},
+            #{payment_customer_name},
+            #{payment_firstname},
+            #{payment_lastname},
+            #{payment_company},
+            #{payment_address_1},
+            #{payment_address_2},
+            #{payment_city},
+            #{payment_postcode},
+            #{payment_country},
+            #{payment_country_id},
+            #{payment_zone},
+            #{payment_zone_id},
+            #{payment_method},
+            #{payment_code},
+            #{payment_telephone},
+            #{payment_requisition_id},
+            #{payment_address_id},
+            #{shipping_customer_name},
+            #{shipping_firstname},
+            #{shipping_lastname},
+            #{shipping_company},
+            #{shipping_address_1},
+            #{shipping_address_2},
+            #{shipping_city},
+            #{shipping_postcode},
+            #{shipping_country},
+            #{shipping_country_id},
+            #{shipping_zone},
+            #{shipping_zone_id},
+            #{shipping_method},
+            #{shipping_code},
+            #{shipping_telephone},
+            #{requisition_id},
+            #{shipping_address_id},
+            #{comment},
+            #{total},
+            #{order_status_id},
+            #{affiliate_id},
+            #{commission},
+            #{marketing_id},
+            #{language_id},
+            #{currency_id},
+            #{currency_code},
+            #{currency_value},
+            #{carrier_id},
+            #{shippingfee_type},
+            #{ip},
+            #{user_agent},
+            #{accept_language},
+            NOW(),
+            NOW()
+        )
+        <selectKey keyProperty="order_id" resultType="String" order="AFTER">
+          SELECT LAST_INSERT_ID();
+        </selectKey>
+    </insert> -->
+    
+    <update id="updateOrderStatusId" parameterType="hashmap">
+        <![CDATA[
+            UPDATE dr_order 
+               SET order_status_id = #{order_status_id}
+             WHERE order_id = #{order_id}
+        ]]>
+    </update>
+    
+    <insert id="addOrderTotal" parameterType="hashmap">
+        <![CDATA[
+            INSERT INTO my_order_total(order_id, code, title, value, sort_order)
+            SELECT #{order_id}, code, title, value, sort_order
+              FROM my_cart_order_total
+             WHERE customer_id = #{customer_id}
+             ORDER BY sort_order
+        ]]>
+    </insert>
+    
+    <insert id="addOrderHistory" parameterType="hashmap">
+        <![CDATA[
+            INSERT INTO my_order_history(order_id, order_status_id, notify, comment, date_added)
+            VALUES
+            (
+                #{order_id},
+                #{order_status_id},
+                #{notify},
+                #{comment},
+                NOW()
+            )
+        ]]>
+    </insert>
+    
+    <insert id="addOrderProduct" parameterType="hashmap">
+        <![CDATA[
+            INSERT INTO my_order_product(order_id, product_id, name, model, quantity, price, total, tax, reward)
+            SELECT m.order_id,
+                   m.product_id, m.name, m.model, m.quantity,
+                   CASE WHEN m.special!=-1 AND m.special!=0 THEN m.special
+                        ELSE m.price
+                        END AS price,
+                   CASE WHEN m.special!=-1 AND m.special!=0 THEN m.special * m.quantity
+                        ELSE m.total
+                        END AS total,
+                   m.tax,
+                   m.reward
+             FROM (
+            SELECT #{order_id} AS order_id, p.product_id, pd.name, p.model, c.quantity, 
+                   p.price, 
+                  (c.quantity * p.price) total, 
+                   ROUND(((c.quantity * p.price)*#{rate})/100,4) AS tax, 
+                   CASE WHEN IFNULL(p.reward_group_id,0)>0 THEN ROUND(((c.quantity * p.price)*100*p.reward_group_id/100))
+                        ELSE ROUND(((c.quantity * p.price)*100*#{config_default_reward}/100))
+                        END AS reward,
+                   IFNULL((SELECT ps.price FROM my_product_special ps WHERE ps.product_id = p.product_id AND ps.customer_group_id IN('0',#{customer_group_id}) AND ((ps.date_start = '0000-00-00' OR ps.date_start < NOW()) AND (ps.date_end = '0000-00-00' OR ps.date_end > NOW())) ORDER BY ps.priority ASC, ps.price ASC LIMIT 1),-1) AS special
+              FROM my_cart c, my_product p, my_product_description pd
+             WHERE c.product_id = p.product_id
+               AND p.product_id = pd.product_id
+               AND c.customer_id = #{customer_id}
+             ORDER BY cart_id
+                  ) m
+        ]]>
+    </insert>
+    
+    <insert id="addCustomerReward" parameterType="hashmap">
+        <![CDATA[
+            INSERT INTO dr_customer_reward(customer_id, order_id, description, points, date_added)
+            SELECT #{customer_id}, #{order_id}, CONCAT(#{description},' - ', title), (value*100), NOW()
+              FROM my_cart_order_total
+             WHERE customer_id = #{customer_id}
+               AND code = 'reward'
+        ]]>
+    </insert>
+    
+    <delete id="deleteCart" parameterType="String">
+        <![CDATA[
+            DELETE FROM my_cart 
+             WHERE customer_id = #{value}
+        ]]>
+    </delete>
+    
+    <update id="updateProductQuantity" parameterType="hashmap">
+        <![CDATA[
+            UPDATE product_quantity 
+               SET quantity = quantity - #{quantity},
+                   date_modified = NOW()
+             WHERE model = #{model}
+        ]]>
+    </update>
+
+    <select id="selectProductQuantity" parameterType="hashmap" resultType="int">
+        <![CDATA[
+            SELECT IFNULL(quantity,0) AS quantity
+              FROM product_quantity
+             WHERE model = #{model}
+        ]]>
+    </select>
+    
+    <update id="updateProductStockStatus" parameterType="hashmap">
+        <![CDATA[
+            UPDATE my_product 
+               SET stock_status_id = #{stock_status_id}
+             WHERE model = #{model}
+        ]]>
+    </update>
+    
+    <update id="updateProductQuantityToZero" parameterType="hashmap">
+        <![CDATA[
+            UPDATE product_quantity 
+               SET quantity = 0,
+                   date_modified = NOW()
+             WHERE model = #{model}
+        ]]>
+    </update>
+</mapper>

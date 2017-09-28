@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+ 
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
+    version="2.0">
+ 
+    <description>CustomTag functions library</description>
+    <display-name>CustomTag functions</display-name>
+    <tlib-version>1.1</tlib-version>
+    <short-name>ctag</short-name>
+    <uri>tlds/CustomTag.tld</uri>
+ 
+    <function>
+        <description>문자열에 님 붙이기</description>
+        <name>getBaseUrl</name>
+        <function-class>myhome.common.util.CustomTag</function-class>
+        <function-signature>java.lang.String getBaseUrl()</function-signature>
+        <example>
+        ${ctag:getBaseUrl()}
+        </example>
+    </function>
+    
+    <function>
+        <description>Success 메세지</description>
+        <name>getSuccess</name>
+        <function-class>myhome.common.util.CustomTag</function-class>
+        <function-signature>java.lang.String getSuccess(java.lang.String)</function-signature>
+        <example>
+        ${ctag:getSuccess(message)}
+        </example>
+    </function>
+    
+    <function>
+        <description>Error 메세지</description>
+        <name>getError</name>
+        <function-class>myhome.common.util.CustomTag</function-class>
+        <function-signature>java.lang.String getError(java.util.List)</function-signature>
+        <example>
+        ${ctag:getError(list)}
+        </example>
+    </function>
+    
+    <function>
+        <description>Error 메세지 (문자)</description>
+        <name>getErrorString</name>
+        <function-class>myhome.common.util.CustomTag</function-class>
+        <function-signature>java.lang.String getErrorString(java.lang.String)</function-signature>
+        <example>
+        ${ctag:getErrorString(error)}
+        </example>
+    </function>
+    
+    <function>
+        <description>금액표시</description>
+        <name>getCurrency</name>
+        <function-class>myhome.common.util.CustomTag</function-class>
+        <function-signature>java.lang.String getCurrency(java.lang.String)</function-signature>
+        <example>
+        ${ctag:getCurrency(currency)}
+        </example>
+    </function>
+    
+    <function>
+        <description>제품금액표시(할인)</description>
+        <name>getPrice</name>
+        <function-class>myhome.common.util.CustomTag</function-class>
+        <function-signature>java.lang.String getPrice(java.lang.String, java.lang.String)</function-signature>
+        <example>
+        ${ctag:getPrice(price, special)}
+        </example>
+    </function>
+    
+    <function>
+        <description>제품금액표시(할인)</description>
+        <name>getProductPrice</name>
+        <function-class>myhome.common.util.CustomTag</function-class>
+        <function-signature>java.lang.String getProductPrice(java.lang.String, java.lang.String, java.lang.String)</function-signature>
+        <example>
+        ${ctag:getProductPrice(price, special, type)}
+        </example>
+    </function>
+    
+    <function>
+        <description>할인 이미지 표시</description>
+        <name>getSaleImage</name>
+        <function-class>myhome.common.util.CustomTag</function-class>
+        <function-signature>java.lang.String getSaleImage(java.lang.String)</function-signature>
+        <example>
+        ${ctag:getSaleImage(special)}
+        </example>
+    </function>
+    
+    <function>
+        <description>숫자표시</description>
+        <name>getNumber</name>
+        <function-class>myhome.common.util.CustomTag</function-class>
+        <function-signature>java.lang.String getNumber(java.lang.String)</function-signature>
+        <example>
+        ${ctag:getNumber(number)}
+        </example>
+    </function>
+    
+    <function>
+        <description>Double</description>
+        <name>getDouble</name>
+        <function-class>myhome.common.util.CustomTag</function-class>
+        <function-signature>java.lang.String getDouble(java.lang.String)</function-signature>
+        <example>
+        ${ctag:getDouble(number)}
+        </example>
+    </function>
+    
+        <function>
+        <description>현재년도</description>
+        <name>getNowYear</name>
+        <function-class>myhome.common.util.CustomTag</function-class>
+        <function-signature>java.lang.String getNowYear()</function-signature>
+        <example>
+        ${ctag:getNowYear()}
+        </example>
+    </function>
+</taglib>

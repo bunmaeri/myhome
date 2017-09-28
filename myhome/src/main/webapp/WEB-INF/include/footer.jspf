@@ -1,0 +1,40 @@
+<%@ page pageEncoding="utf-8"%>
+<div id="wrap-loading" class="wrap-loading display-none" style="position: fixed;top:50%;left:50%;margin-left: -250px;margin-top: -200px;">
+    <div><img src="/image/loading.png" /></div>
+</div> 
+<form id="commonForm" name="commonForm"></form>
+<footer id="footer" class="footer" role="contentinfo">
+    <div class="container-fluid">
+        <div class="footer-bottom">
+            <div class="col-md-2">
+                <p>
+                    <a href="/books.dr">
+                        <img src="/image/catalog/home-book1.jpg" alt="Dr. Pure Natural 책" />
+                    </a>
+                </p>
+                <h6 style="font-size:14px;">우리집 주치의 자연의학</h6>
+            </div>
+            <div class="col-md-7">
+	            <p>이 사이트이 모든 내용들은 한국의 저작권위원회와 미국 Copyright Office에 등록되어있어<br>미국과 협약이 되어있는 한국을 포함, 거의 전 세계국가들에서 저작권 보호를 받고 있습니다.<br>만약 모방사이트를 발견하시면 즉시 저희에게 알려주시기 바랍니다.</p>
+	            <address class="copyright">
+	                Dr. Pure Natural&copy;2006 - ${ctag:getNowYear()}.All Rights Reserved. 
+	            </address>
+            </div>
+            <div class="col-md-3">
+                <button class="link back-to-top" onclick="Gorilla.utilities.scrollTo(jQuery('#masthead'))">Top <i class="icon-arrow-top"></i></button>
+                <ul class="links links__inline links__center">
+                    <li><a href="/information/privacy-policy.dr">개인정보보호정책</a></li>
+                    <li><a href="/information/privacy-policy/en.dr">Privacy Policy</a></li>
+                </ul>
+                <ul class="links links__inline links__center">
+                    <li><a href="/information/return-policy.dr">반품정책</a></li>
+                    <li><a href="/information/return-policy/en.dr">Return Policy</a></li>
+                </ul>
+                <ul class="links links__inline links__center">
+                    <li><a href="/information/terms-of-use.dr">이용약관</a></li>
+                    <li><a href="/information/terms-of-use/en.dr">Terms and Conditions</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>

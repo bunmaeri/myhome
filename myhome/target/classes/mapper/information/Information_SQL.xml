@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="information">
+    
+    <select id="info" parameterType="hashmap" resultType="hashmap">
+        <![CDATA[
+            SELECT language_id
+                  ,title
+                  ,image
+                  ,description
+                  ,meta_title
+                  ,meta_description
+                  ,meta_keyword
+              FROM my_security
+             WHERE code = #{code}
+               AND language_id = #{language_id}
+        ]]>
+    </select>
+    
+    <select id="listInfo" parameterType="hashmap" resultType="hashmap">
+        <![CDATA[
+            SELECT contents_id
+                  ,language_id
+                  ,title
+             FROM my_security_contents
+            WHERE status = '1'
+              AND language_id = #{language_id}
+              AND code = #{code}
+            ORDER BY title ASC
+        ]]>
+    </select>
+    
+    <select id="listDiseaseContentsMedicine" parameterType="hashmap" resultType="hashmap">
+        <![CDATA[
+            SELECT idcm.contents_id
+                  ,idcm.medicine_id
+                  ,idcm.product_id
+                  ,pd.name
+                  ,p.image
+              FROM my_product p, my_product_description pd, my_security_contents_medicine idcm
+             WHERE p.product_id = pd.product_id
+               AND pd.product_id = idcm.product_id
+               AND idcm.contents_id = #{contents_id}
+               AND idcm.medicine_id = #{medicine_id}
+               AND pd.language_id = #{language_id}
+               AND idcm.status = '1'
+               AND p.status = '1'
+        ]]>
+    </select>
+    
+    <select id="infoContents" parameterType="hashmap" resultType="hashmap">
+        <![CDATA[
+            SELECT contents_id
+                  ,language_id
+                  ,title
+                  ,image
+                  ,description
+                  ,meta_title
+                  ,meta_description
+                  ,meta_keyword
+              FROM my_security_contents
+             WHERE contents_id = #{contents_id}
+               AND language_id = #{language_id}
+               AND code = #{code}
+        ]]>
+    </select>
+    
+    <select id="listInfoForRecentViewed" parameterType="hashmap" resultType="hashmap">
+        SELECT contents_id
+              ,language_id
+              ,title
+              ,code
+         FROM my_security_contents
+        WHERE status = '1'
+          AND language_id = #{language_id}
+          AND code = #{code}
+          AND contents_id IN
+         <foreach collection="array" item="item" index="index" open="(" separator="," close=")">
+             ${array[index]}
+         </foreach>
+        ORDER BY title
+    </select>
+    
+    <select id="information" parameterType="hashmap" resultType="hashmap">
+        <![CDATA[
+            SELECT information_id
+                  ,language_id
+                  ,title
+                  ,image
+                  ,description
+                  ,meta_title
+                  ,meta_description
+                  ,meta_keyword
+              FROM my_information
+             WHERE information_id = #{information_id}
+               AND language_id = #{language_id}
+        ]]>
+    </select>
+    
+    <select id="listInformation" parameterType="hashmap" resultType="hashmap">
+        <![CDATA[
+            SELECT information_id
+                  ,language_id
+                  ,title
+             FROM my_information
+            WHERE status = '1'
+              AND language_id = #{language_id}
+            ORDER BY sort_order ASC
+        ]]>
+    </select>
+    
+    <select id="contentData" parameterType="hashmap" resultType="hashmap">
+        <![CDATA[
+            SELECT contents_id,
+                   language_id,
+                   title,
+                   description,
+                   image,
+                   meta_title,
+                   meta_description,
+                   meta_keyword,
+                   status
+              FROM my_contents
+             WHERE contents_id = #{contents_id}
+               AND language_id = #{language_id}
+        ]]>
+    </select>
+</mapper>

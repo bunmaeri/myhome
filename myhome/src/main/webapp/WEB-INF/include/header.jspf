@@ -1,0 +1,232 @@
+<%@ page pageEncoding="utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>  
+<!-- < taglib prefix="ui" uri=" http://egovframework.gov/ctl/ui " > -->
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt_rt" %>
+<%@ taglib prefix="ctag" uri="/WEB-INF/tlds/CustomTag.tld"%>
+
+<!doctype html>
+<!--[if IE 8]><html lang="en" class="ie8"><![endif]-->
+<!--[if gt IE 8]><!--><html lang="en"><!--<![endif]-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>My Home Doc</title>
+<meta name="description" content="" />
+<meta name="keywords" content="" />
+<meta name="robots" content="NOINDEX,NOFOLLOW" />
+<link rel="icon" href="/image/favicon.png" type="image/x-icon" />
+<link rel="shortcut icon" href="/image/favicon.png" type="image/x-icon" />
+<!--[if lt IE 7]>
+<script type="text/javascript">
+//<![CDATA[
+    var BLANK_URL = '/js/blank.html';
+    var BLANK_IMG = '/js/spacer.gif';
+//]]>
+</script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="<c:url value='/css/main.css'/>?2017097" media="all" />
+<c:forEach items="${css}" var="css">
+<link rel="stylesheet" type="text/css" href="<c:url value='${css}'/>?2017092412" media="all" />
+</c:forEach>
+
+<script type="text/javascript" src="<c:url value='/js/prototypejs.js'/>"></script>
+<!--[if lt IE 7]>
+<script type="text/javascript" src="<c:url value='/js/sleight.js'/>"></script>
+<![endif]-->
+<!--[if lt IE 10]>
+<script type="text/javascript" src="<c:url value='/js/match_media.js'/>"></script>
+<![endif]-->
+<!--[if lt IE 9]>
+<script type="text/javascript" src="<c:url value='/js/jdom.js'/>"></script>
+<![endif]-->
+
+<script type="text/javascript" src="https://code.jquery.com/jquery.min.js"></script>
+<script src="<c:url value='/js/common.js'/>" charset="utf-8"></script>
+<c:forEach items="${js}" var="js">
+<script src="<c:url value='${js}'/>" charset="utf-8"></script>
+</c:forEach>
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
+<link href="/js/font-awesome/css/font-awesome.min.css?20170405" rel="stylesheet" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+</head>
+<body class="<c:out value="${body_class}" default="cms-index-index cms-home cms-page"/>">
+
+<noscript>
+  <div class="global-site-notice noscript">
+    <div class="notice-inner">
+      <p>
+        <strong>브라우저에서 JavaScript가 비활성화 된 것 같습니다.</strong><br />이 웹 사이트의 기능을 사용하려면 브라우저에서 JavaScript를 활성화해야합니다.
+      </p>
+    </div>
+  </div>
+</noscript>
+<header id="masthead" class="masthead" role="banner">
+    <div class="container-fluid">
+        <div class="col-md-5">
+	        <button id="hamburger" type="button" class="hamburger visible-md" data-tray="toggle" data-target="#masthead"><span class="sr-only">Mobile Navigation Menu</span><span class="hamburger__inner"></span></button>
+	        <h1 class="logo">
+	            <a href="${ctag:getBaseUrl()}">
+	                <img src="/image/logo_myhome.png" alt="My Home Doc" />
+	            </a>
+	        </h1>
+	        <a href="/cart.dr" class="link link__cart visible-md">
+                <i class="icon-cart"></i>
+                <span class="count"><c:out value="${sessionScope.CART}" default="0"/></span>
+            </a>
+	    </div>
+	    <div class="col-md-7 mobile-hide">
+	        <div id="search-accordion" class="gor-accordion search-accordion" role="menu">
+                <div class="accordion-header gor-active" role="tab" aria-expanded="true"></div>
+                <div class="accordion-content gor-active" role="tabpanel" style="height:45px;">
+                    <div class="accordion-content-inner container-fluid">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-9" style="padding-right: 0;">
+	                        <form id="search_form" action="/search.dr" method="get">
+	                            <label for="search" class="sr-only">검색하세요.</label>
+	                            <input id="search" type="text" name="q" value="" class="input-text" maxlength="128" placeholder="검색하세요." autocomplete="off">
+	                        </form>
+	                        <button type="button" class="button button-close" data-accordion="collapse" data-target="" data-index="0"><i class="icon-search"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+            <ul class="links links__inline" style="margin:10px 0;">
+            <c:choose>
+            <c:when test="${sessionScope.IS_SESSION}">
+                <li><a href="/account/edit.dr" class="link">회원정보</a></li>
+                <li><a href="/account/wishlist.dr" class="link">위시리스트<span class="count">(<c:out value="${sessionScope.WISHLIST_COUNT}" default="0"/>)</span></a></li>
+                <li><a href="/cart.dr" class="link">장바구니</a></li>
+            </c:when>
+            <c:otherwise>
+                <li><a href="/login.dr" class="link">로그인</a></li>
+                <li><a href="/register.dr" class="link">회원가입</a></li>
+            </c:otherwise>
+            </c:choose>
+                <li><a href="/information/contact.dr" class="link">연락처</a></li>
+            <c:if test="${sessionScope.IS_SESSION}">
+                <li><a href="/logout.dr" class="link">로그아웃</a></li>
+            </c:if>
+                <li>
+                    <div id="mini-cart" class="mini-cart">
+                        <a href="/cart.dr" class="link">
+                            <i class="icon-cart"></i>
+                            <span class="count"><c:out value="${sessionScope.CART}" default="0"/></span>
+                        </a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+
+	    <div class="rows">
+	        <div id="mobile-navigation" class="mobile-navigation">
+	            <div class="mobile-navigation__inner">
+		            <div class="mobile-search visible-md">
+					    <form id="mobile_search_mini_form" class="inline-form" action="/search.dr" method="get">
+					        <label for="mobile-search" class="sr-only">검색하세요.</label>
+					        <input id="mobile-search" type="text" name="q" value="" class="input-text" maxlength="128" placeholder="검색하세요." autocomplete="off">
+					    </form>
+					    <script type="text/javascript">
+					        //<![CDATA[
+					        var searchForm = new VarienForm('mobile_search_mini_form');
+					        //]]>
+					    </script>
+					</div>
+					<ul class="links links__inline visible-md" style="margin: 5px 0;">
+		            <c:choose>
+		            <c:when test="${sessionScope.IS_SESSION}">
+		                <li><a href="/account/edit.dr" class="link">회원정보</a></li>
+		                <li><a href="/account/wishlist.dr" class="link">위시리스트<span class="count">(<c:out value="${sessionScope.WISHLIST_COUNT}" default="0"/>)</span></a></li>
+		                <li><a href="/cart.dr" class="link">장바구니</a></li>
+		            </c:when>
+		            <c:otherwise>
+		                <li><a href="/login.dr" class="link">로그인</a></li>
+		                <li><a href="/register.dr" class="link">회원가입</a></li>
+		            </c:otherwise>
+		            </c:choose>
+		                <li><a href="/information/contact.dr" class="link">연락처</a></li>
+		            <c:if test="${sessionScope.IS_SESSION}">
+		                <li><a href="/logout.dr" class="link">로그아웃</a></li>
+		            </c:if>
+		            </ul>
+	                <nav id="navigation" class="navigation gor-nav" role="navigation">
+	                    <ul>
+	                        <li class="level0 level-top resources"><a href="/" class="level-top" style="padding-left:0;">Home</a></li>
+	                        <li class="level0 level-top resources"><a href="/information/aboutus.dr" class="level-top">Dr. Pure Natural 소개</a></li>
+                            <li  class="level0 nav-1 first level-top parent">
+                               <a href="javascript:;" class="level-top"><span>제품들</span><span class="carat retina"></span></a>
+                               <div class="drop-down">
+                                   <ul class="level0 products">
+                                       <li  class="level1 nav-1-1 parent">
+                                            <a href="/products/category/3.dr" ><span>자연의학 전문 제품</span></a>
+                                       </li>
+                                       <li  class="level1 nav-1-2 parent">
+                                            <a href="javascript:;" ><span>일반 제품</span></a>
+                                            <div class="drop-down">
+                                                <ul class="level1">
+                                                    <li class="level2 nav-1-2-1 first"><a href="/products/category/4.dr" ><span>일반자연제품</span></a></li>
+                                                    <li class="level2 nav-1-2-2"><a href="/products/category/6.dr" ><span>농축가루한약</span></a></li>
+                                                    <li class="level2 nav-1-2-3"><a href="/products/category/7.dr" ><span>100% 유기농</span></a></li>
+                                                </ul>
+                                            </div>
+                                       </li>
+                                       <li  class="level1 nav-1-3 first parent">
+                                            <a href="javascript:;"><span>천연제품</span></a>
+                                            <div class="drop-down">
+                                                <ul class="level1">
+                                                    <li class="level2 nav-1-3-1 first"><a href="/products/category/5.dr" ><span>천연비타민</span></a></li>
+                                                    <li class="level2 nav-1-3-2"><a href="/products/category/8.dr" ><span>천연유아용품</span></a></li>
+                                                    <li class="level2 nav-1-3-3"><a href="/products/category/9.dr" ><span>천연아동용품</span></a></li>
+                                                    <li class="level2 nav-1-3-4"><a href="/products/category/10.dr" ><span>천연애완용품</span></a></li>
+                                                </ul>
+                                            </div>
+                                        </li>
+                                        
+	                                    <li  class="level1 nav-1-4 last parent"><a href="/products/category/91.dr" ><span>천연피부미용</span></a>
+	                                       <div class="drop-down">
+	                                           <ul class="level1">
+	                                               <li class="level2 nav-1-4-1 first"><a href="/products/category/92.dr" ><span>스킨케어</span></a></li>
+	                                               <li class="level2 nav-1-4-2"><a href="/products/category/93.dr" ><span>목욕용품</span></a></li>
+	                                               <!-- <li class="level2 nav-1-4-3"><a href="/products/category/94.dr" ><span>메이크업</span></a></li> -->
+	                                               <li class="level2 nav-1-4-4"><a href="/products/category/95.dr" ><span>로션</span></a></li>
+	                                               <li class="level2 nav-1-4-5"><a href="/products/category/96.dr" ><span>썬크림</span></a></li>
+	                                               <li class="level2 nav-1-4-6"><a href="/products/category/97.dr" ><span>립밤</span></a></li>
+	                                               <li class="level2 nav-1-4-7"><a href="/products/category/98.dr" ><span>염색</span></a></li>
+	                                               <li class="level2 nav-1-4-8"><a href="/products/category/99.dr" ><span>헤어스타일링</span></a></li>
+	                                               <li class="level2 nav-1-4-9"><a href="/products/category/100.dr" ><span>치약</span></a></li>
+	                                               <li class="level2 nav-1-4-10"><a href="/products/category/101.dr" ><span>모기,화상,상처</span></a></li>
+	                                           </ul>
+	                                       </div>
+	                                    </li>
+	                                </ul>
+	                            </div>
+	                        </li>
+	                        <!-- <li class="level0 level-top resources"><a href="/information/our_phylosophy.dr" class="level-top">유용정보</a></li> -->
+                            <li class="level0 nav-4 level-top parent">
+                                <a href="javascript:;"  class="level-top" ><span>유용정보</span><span class="carat retina"></span></a>
+                                <div class="drop-down">
+                                    <ul class="level0 information">
+                                        <li  class="level1 nav-4-1 first"><a href="/information/our_phylosophy.dr" ><span>운영철학</span></a></li>
+                                        <li  class="level1 nav-4-2"><a href="/information/purity.dr" ><span>순수품질</span></a></li>
+                                        <li  class="level1 nav-4-3"><a href="/information/customs_policy.dr" ><span>세관규정</span></a></li>
+                                        <li  class="level1 nav-4-3"><a href="/information/tracking.dr" ><span>배송조회</span></a></li>
+                                        <li  class="level1 nav-4-3"><a href="/information/how_to_gets_results.dr" ><span>효과보는 복용법</span></a></li>
+                                        <li  class="level1 nav-4-3"><a href="/information/low_quality.dr" ><span>저질제품이란</span></a></li>
+                                        <li  class="level1 nav-4-3"><a href="/information/my_column.dr" ><span>동아일보연재</span></a></li>
+                                        <li  class="level1 nav-4-3"><a href="/information/diagnosis.dr" ><span>진료를 원하시는 분들께</span></a></li>
+                                        <li  class="level1 nav-4-4 last"><a href="/information/requisition.dr" ><span>통관고유부호 발급안내</span></a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="level0 level-top resources"><a href="/information/health.dr" class="level-top">건강정보</a></li>
+                            <li class="level0 level-top resources"><a href="/information/disease.dr" class="level-top">질병과 추천생약제</a></li>
+                            <li class="level0 level-top resources"><a href="/information/clinic.dr" class="level-top">임상사례</a></li>
+                            <li class="level0 level-top resources"><a href="/information/faq.dr" class="level-top">자주하는 질문들</a></li>
+                        </ul>
+	                </nav>
+	            </div>
+		    </div>
+	    </div>
+    </div>
+</header>

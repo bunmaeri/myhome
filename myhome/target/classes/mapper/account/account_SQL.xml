@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="account">
+    
+    <select id="accountInfo" parameterType="hashmap" resultType="hashmap">
+        <![CDATA[
+            SELECT *
+              FROM dr_customer
+             WHERE customer_id = #{customer_id}
+        ]]>
+    </select>
+    
+    <select id="cart" parameterType="String" resultType="int">
+        SELECT IFNULL(SUM(quantity),0) AS total_cnt
+          FROM my_cart
+         WHERE customer_id = #{value}
+    </select>
+    
+    <select id="duplicateEmail" parameterType="String" resultType="int">
+        SELECT COUNT(*) FROM dr_customer WHERE email = #{value}
+    </select>
+    
+    <update id="updateAccountInfo" parameterType="hashmap">
+        <![CDATA[
+            UPDATE dr_customer 
+               SET customer_name = #{customer_name}
+                  ,firstname = #{firstname}
+                  ,lastname = #{lastname}
+                  ,email = #{email}
+                  ,telephone = #{telephone}
+            WHERE customer_id = #{customer_id}
+        ]]>
+    </update>
+    
+    <update id="updatePassword" parameterType="hashmap">
+        <![CDATA[
+            UPDATE dr_customer 
+               SET password = #{password}
+            WHERE customer_id = #{customer_id}
+        ]]>
+    </update>
+    
+    <update id="updatePasswordByEmail" parameterType="hashmap">
+        <![CDATA[
+            UPDATE dr_customer 
+               SET password = #{password},
+                   code = #{code}
+             WHERE email = #{email}
+        ]]>
+    </update>
+    
+    <update id="updatePasswordByCode" parameterType="hashmap">
+        <![CDATA[
+            UPDATE dr_customer 
+               SET password = #{password},
+                   code = ''
+             WHERE code = #{code}
+        ]]>
+    </update>
+    
+    <select id="orderHistoryTotal" parameterType="String" resultType="int">
+        SELECT COUNT(*) AS total_cnt
+          FROM dr_customer m1, dr_order m2
+         WHERE m1.customer_id = m2.customer_id
+           AND m1.customer_id = #{value}
+           AND m2.order_status_id != 0
+    </select>
+    
+    <select id="orderHistory" parameterType="hashmap" resultType="hashmap">
+        <include refid="common.pagingPre"/> 
+        <![CDATA[
+            SELECT m2.order_id,
+                   DATE_FORMAT(m2.date_added, '%Y-%m-%d') AS order_date,
+                   m2.shipping_customer_name,
+                   ROUND(m2.total,2) AS total,
+                   m2.order_status_id,
+                  (SELECT s.name FROM dr_order_status s WHERE s.order_status_id=m2.order_status_id) AS order_status_name
+              FROM dr_customer m1, dr_order m2
+             WHERE m1.customer_id = m2.customer_id
+               AND m1.customer_id = #{customer_id}
+               AND m2.order_status_id != 0
+             ORDER BY m2.date_added DESC
+        ]]>
+        <include refid="common.pagingSub"/> 
+    </select>
+    
+    <select id="orderInfo" parameterType="hashmap" resultType="hashmap">
+        <![CDATA[
+            SELECT *,
+                   DATE_FORMAT(date_added, "%Y-%m-%d") AS order_date
+              FROM dr_order
+             WHERE order_id = #{order_id}
+        ]]>
+    </select>
+    <select id="orderProductList" parameterType="hashmap" resultType="hashmap">
+        <![CDATA[
+            SELECT dop.product_id,
+			       dop.name,
+			       dop.model,
+			       ROUND(dop.price,2) AS price,
+			       dop.quantity,
+			       ROUND(dop.total,2) AS total
+			  FROM my_order_product dop
+			 WHERE dop.order_id = #{order_id}
+			 ORDER BY dop.order_product_id ASC
+        ]]>
+    </select>
+    <select id="orderTotalList" parameterType="hashmap" resultType="hashmap">
+        <![CDATA[
+             SELECT code,
+                    title,
+			        `value`
+			   FROM my_order_total
+			  WHERE order_id = #{order_id}
+			  ORDER BY sort_order
+        ]]>
+    </select>
+    <select id="orderHistoryList" parameterType="hashmap" resultType="hashmap">
+        <![CDATA[
+             SELECT oh.date_added,
+			        os.name AS status,
+			        oh.comment,
+			        oh.notify 
+			   FROM my_order_history oh LEFT JOIN dr_order_status os
+			     ON oh.order_status_id = os.order_status_id
+		 	  WHERE oh.order_id = #{order_id}
+			  ORDER BY oh.date_added
+        ]]>
+    </select>
+
+    <select id="wishlist" parameterType="hashmap" resultType="hashmap">
+        <![CDATA[
+            SELECT m.product_id,
+                   m.quantity,
+                   m.comment,
+                   m.name,
+                   m.model,
+                   m.stock_status_id,
+                   ss.name AS stock_status_name,
+                   m.image,
+                   m.price,
+                   m.manufacturer_name
+             FROM (
+                   SELECT cw.product_id,
+                          cw.quantity,
+                          cw.comment,
+                          pd.name,
+                          p.model,
+                          CASE WHEN pq.quantity<=0 THEN 5
+                               WHEN pq.quantity>0 THEN 7
+                               ELSE p.stock_status_id
+                               END AS stock_status_id,
+                          p.image,
+                          p.price,
+                         (SELECT m.name FROM dr_manufacturer m WHERE p.manufacturer_id=m.manufacturer_id) AS manufacturer_name
+                     FROM dr_customer_wishlist cw, my_product p, my_product_description pd, product_quantity pq
+                    WHERE cw.product_id = p.product_id
+                      AND p.product_id = pd.product_id
+                      AND p.model = pq.model
+                      AND cw.customer_id = #{customer_id}
+                   ) m, dr_stock_status ss
+            WHERE m.stock_status_id = ss.stock_status_id
+              AND ss.language_id = #{language_id}
+            ORDER BY m.name ASC
+        ]]>
+    </select>
+    
+    <select id="wishlistCount" parameterType="String" resultType="int">
+        SELECT COUNT(*) AS total_cnt
+          FROM dr_customer_wishlist
+         WHERE customer_id = #{value}
+    </select>
+    
+    <delete id="deleteWishlist" parameterType="hashmap">
+        <![CDATA[
+            DELETE FROM dr_customer_wishlist 
+             WHERE customer_id = #{customer_id}
+               AND product_id = #{product_id}
+        ]]>
+    </delete>
+    
+    <select id="isWishlist" parameterType="hashmap" resultType="int">
+        SELECT COUNT(*) AS total_cnt
+          FROM dr_customer_wishlist
+         WHERE customer_id = #{customer_id}
+           AND product_id = #{product_id}
+    </select>
+    
+    <insert id="addWishlist" parameterType="hashmap">
+        <![CDATA[
+            INSERT INTO dr_customer_wishlist(customer_id, product_id, quantity, date_added)
+            VALUES
+            (
+                #{customer_id},
+                #{product_id},
+                #{quantity},
+                NOW()
+            )
+        ]]>
+    </insert>
+    
+    <select id="rewardTotal" parameterType="String" resultType="hashmap">
+        SELECT IFNULL(SUM(points),0) AS total_points,
+               COUNT(*) AS total_count
+          FROM dr_customer_reward
+         WHERE customer_id = #{value}
+    </select>
+    
+    <select id="reward" parameterType="hashmap" resultType="hashmap">
+        <include refid="common.pagingPre"/> 
+        <![CDATA[
+            SELECT order_id,
+                   DATE_FORMAT(date_added, '%Y-%m-%d') AS date_added,
+                   description,
+                   points
+              FROM dr_customer_reward
+             WHERE customer_id = #{customer_id}
+             ORDER BY customer_reward_id DESC
+        ]]>
+        <include refid="common.pagingSub"/> 
+    </select>
+    
+    <select id="isCart" parameterType="hashmap" resultType="int">
+        SELECT COUNT(*) AS total_cnt
+          FROM my_cart
+         WHERE customer_id = #{customer_id}
+           AND product_id = #{product_id}
+    </select>
+    
+    <insert id="addToCart" parameterType="hashmap">
+        <![CDATA[
+            INSERT INTO my_cart(customer_id, product_id, quantity, date_added)
+            VALUES
+            (
+                #{customer_id},
+                #{product_id},
+                #{quantity},
+                NOW()
+            )
+        ]]>
+    </insert>
+    
+    <update id="updateCart" parameterType="hashmap">
+        <![CDATA[
+            UPDATE my_cart 
+               SET quantity = quantity + #{quantity}
+                  ,date_added = NOW()
+             WHERE customer_id = #{customer_id}
+               AND product_id = #{product_id}
+        ]]>
+    </update>
+    
+    <update id="editCart" parameterType="hashmap">
+        <![CDATA[
+            UPDATE my_cart 
+               SET quantity = #{quantity}
+                  ,date_added = NOW()
+             WHERE customer_id = #{customer_id}
+               AND product_id = #{product_id}
+        ]]>
+    </update>
+    
+    <delete id="deleteCart" parameterType="hashmap">
+        <![CDATA[
+            DELETE FROM my_cart 
+             WHERE customer_id = #{customer_id}
+               AND product_id = #{product_id}
+        ]]>
+    </delete>
+    
+    <update id="updateWishlist" parameterType="hashmap">
+        <![CDATA[
+            UPDATE dr_customer_wishlist 
+               SET quantity = #{quantity}
+                  ,comment = #{comment}
+             WHERE customer_id = #{customer_id}
+               AND product_id = #{product_id}
+        ]]>
+    </update>
+    
+    <select id="address" parameterType="hashmap" resultType="hashmap">
+        SELECT a.address_id,
+               a.address_alias,
+		       a.customer_name,
+		       a.firstname,
+		       a.lastname,
+		       a.company,
+		       a.address_1,
+		       a.address_2,
+		       a.city,
+		       a.postcode,
+		       a.telephone,
+		       a.country_id,
+		       c.name AS country_name,
+		       a.zone_id,
+		      (SELECT z.name FROM dr_zone z WHERE a.zone_id = z.zone_id) AS zone_name,
+		       a.requisition_id
+		  FROM dr_address a, dr_country c
+		 WHERE a.country_id = c.country_id
+		   AND a.customer_id = #{customer_id}
+		 ORDER BY a.address_id ASC
+    </select>
+    
+    <select id="addressInfo" parameterType="String" resultType="hashmap">
+        SELECT a.address_id,
+               a.address_alias,
+               a.customer_name,
+               a.firstname,
+               a.lastname,
+               a.company,
+               a.address_1,
+               a.address_2,
+               a.city,
+               a.postcode,
+               a.telephone,
+               a.country_id,
+               c.name AS country_name,
+               a.zone_id,
+               z.name AS zone_name,
+               z.code AS zone_code,
+               a.requisition_id,
+               c.iso_code_2
+          FROM dr_country c, dr_address a LEFT OUTER JOIN dr_zone z
+            ON a.zone_id = z.zone_id
+         WHERE a.country_id = c.country_id
+           AND a.address_id = #{value}
+    </select>
+    
+    <insert id="addAddress" parameterType="hashmap" useGeneratedKeys="true" keyProperty="address_id">
+        <![CDATA[
+            INSERT INTO dr_address (customer_id, address_alias, customer_name, firstname, lastname, company, address_1, address_2, city, postcode, telephone, country_id, zone_id, requisition_id)
+            VALUES
+            (
+                #{customer_id}, 
+                #{address_alias},
+                #{customer_name},
+                #{firstname}, 
+                #{lastname},
+                #{company},
+                #{address_1}, 
+                #{address_2},
+                #{city},
+                #{postcode}, 
+                #{telephone},
+                #{country_id},
+                #{zone_id},
+                #{requisition_id}
+            )
+        ]]>
+    </insert>
+    
+    <update id="editAddress" parameterType="hashmap">
+        <![CDATA[
+            UPDATE dr_address 
+               SET address_alias = #{address_alias}
+                  ,customer_name = #{customer_name}
+                  ,firstname = #{firstname}
+                  ,lastname = #{lastname}
+                  ,company = #{company}
+                  ,address_1 = #{address_1}
+                  ,address_2 = #{address_2}
+                  ,city = #{city}
+                  ,postcode = #{postcode}
+                  ,telephone = #{telephone}
+                  ,country_id = #{country_id}
+                  ,zone_id = #{zone_id}
+                  ,requisition_id = #{requisition_id}
+             WHERE address_id = #{address_id}
+        ]]>
+    </update>
+    
+    <delete id="deleteAddress" parameterType="String">
+        <![CDATA[
+            DELETE FROM dr_address 
+             WHERE address_id = #{value}
+        ]]>
+    </delete>
+    
+     <update id="defaultPaymentAddress" parameterType="hashmap">
+        <![CDATA[
+            UPDATE dr_customer 
+               SET address_id = #{address_id},
+                   type_label = #{type_label}
+             WHERE customer_id = #{customer_id}
+        ]]>
+    </update>
+    <update id="defaultShippingAddress" parameterType="hashmap">
+        <![CDATA[
+            UPDATE dr_customer 
+               SET shipping_address_id = #{address_id}
+             WHERE customer_id = #{customer_id}
+        ]]>
+    </update>
+    
+    <select id="zone" parameterType="String" resultType="hashmap">
+        SELECT *
+          FROM dr_zone
+         WHERE country_id = #{value}
+           AND status = 1
+         ORDER BY name ASC
+    </select>
+    
+    <select id="listCustomerJoinPath" resultType="hashmap">
+        SELECT *
+          FROM dr_customer_join_path
+         ORDER BY sort_order ASC
+    </select>
+</mapper>

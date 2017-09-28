@@ -1,0 +1,177 @@
+<%@ page pageEncoding="utf-8"%>
+<div id="registration-modal" class="gor-modal registration-modal">
+    <div class="modal-content">
+        <button type="button" class="modal-close" data-modal="toggle" data-target="#registration-modal"><i class="icon-close"></i></button>
+        <header>
+            <h3>Get Started.</h3>
+            <ul id="progress-bar" class="progress-bar links links__inline">
+                <li class="progress-step progress-step-01 active"><span>1</span></li>
+                <li class="progress-step progress-step-02"><span>2</span></li>
+                <li class="progress-step progress-step-03"><span>3</span></li>
+            </ul>
+            <div id="messages-modal"></div>
+        </header>
+        <div id="registration-steps" class="registration-steps">
+            <div class="step step-01 active">
+                <p>To order products online, you must be a licensed healthcare practitioner or have a fulfillment code from your healthcare practitioner.</p>                <p class="link login-prompt">ALREADY HAVE AN ACCOUNT? <a id="login-link" href="https://www.pureencapsulations.com/customer/account/login/referer/aHR0cDovL3d3dy5wdXJlZW5jYXBzdWxhdGlvbnMuY29tLw,,/">Login</a>
+                    <a id="help-link" href="http://www.pureencapsulations.com/about-us/help-center/">Get Help</a></p>
+                <div class="buttons-set">
+                    <h4>Are you a healthcare practitioner?</h4>
+                    <button class="button button-white button-plain" data-current="1" data-progress="2" data-step="4">Yes</button>
+                    <button class="button button-white button-plain" data-current="1" data-progress="2" data-step="2" onclick="dataLayer.push({'event': 'gs-modal-consumer'});">No</button>
+                </div>
+            </div>
+
+            <div class="step step-02">
+                <h4>Do you have a healthcare practitioner?</h4>
+                <p>If you do not have a healthcare practitioner, we can connect you with a local practitioner to help you decide which nutritional supplements are right for you.</p>                <div class="buttons-set">
+                    <button class="button button-white button-plain" data-current="2" data-progress="3" data-step="3">Yes</button>
+                    <button class="button button-white button-plain" data-current="2" data-progress="3" data-step="6">No</button>
+                </div>
+            </div>
+
+            <div class="step step-03">
+                <h4>Do you have a fulfillment code?</h4>
+                <p>A Fulfillment code from your healthcare practitioner is required  to purchase nutritional supplements directly through pureencapsulations.com.</p>                <div class="buttons-set">
+                    <a id="yes-fulfillment-link" href="https://www.pureencapsulations.com/affiliate/account/createCustomer/" class="button button-white button-plain">Yes</a>
+                    <a id="no-fulfillment-link" href="http://www.pureencapsulations.com/customer-service/find-your-practitioner/" class="button button-white button-plain">No</a>
+                </div>
+            </div>
+
+            <div class="step step-04">
+                <h4>Create your account</h4>
+                <p>Qualify for special pricing, receive exclusive offers and access additional practitioner resources.</p>                <button class="button button-default button-white button-block" data-current="4" data-progress="3" data-step="5" id="license_profile_button">Create an account</button>
+                <div class="more-info">
+                    <p>We offer research and educational materials exclusively for healthcare practitioners.</p>
+                    <a id="resource-link" href="http://blog.pureencapsulations.com/category/practitioner-resources/" class="link link-arrow">View Our Practitioner Resources</a>
+                </div>
+                <?php// if($enabled): ?>
+    <div class="doximity">
+        <h4>Already a member of Doximity?</h4>
+        <a id="doximity_login" href="https://auth.doximity.com/oauth/authorize">
+            <img src="http://www.pureencapsulations.com/media/doximity/stores/1/doximity-button-login-dark-64589ccebdc600e18dd61955ae980e0b.png" alt="Login with Doximity" title="Login with Doximity" />
+        </a>
+
+        <script type="text/javascript">
+            //<![CDATA[
+            Event.observe('doximity_login', 'click', function(event) {
+                // if (confirm('Are you sure?')) {
+                this.href = 'https://auth.doximity.com/oauth/authorize?client_id=fad71bc758b1848bb3766638bf9ed0b19b62d14057a47569b3e8bc1df8e60b77&redirect_uri=https%3A%2F%2Fwww.pureencapsulations.com%2Fcustomer%2Faccount%2F&response_type=code&scope=email&type=login&state=xIGblBqUFANY';
+                // }
+
+            });
+            //]]>
+        </script>
+    </div>
+            </div>
+
+            <div class="step step-05">
+                <h4>Enter your profile information.</h4>
+                <p>Finish creating your account and make your first order today.</p>                <form id="create_profile_modal" action="http://www.pureencapsulations.com/affiliate/account/preRegisterCustomerPost/" method="post">
+                    <ul class="form-list">
+                        <li>
+                            <label for="fname_modal" class="sr-only">First Name</label>
+                            <div class="input-box">
+                                <input type="text" name="first_name" id="first_name_modal" class="input-text required-entry" value="" placeholder="First Name" />
+                            </div>
+                        </li>
+                        <li>
+                            <label for="lname_modal" class="sr-only">Last Name</label>
+                            <div class="input-box">
+                                <input type="text" name="last_name" id="last_name_modal" class="input-text required-entry" value="" placeholder="Last Name" />
+                            </div>
+                        </li>
+                        <li>
+                            <label for="email_modal" class="sr-only">Email Address</label>
+                            <div class="input-box">
+                                <input type="text" name="email" id="email_modal" class="input-text validate-email required-entry" value="" placeholder="Email Address" />
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="buttons-set">
+                        <input type="hidden" id="customer_type_modal" name="customer_type" value="1" />
+                        <input type="hidden" id="license_number_modal" name="license_number" value="" />
+                        <button type="submit" class="button button-block button-default">Next</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="step step-06">
+                <p>Before buying, connect with a local practitioner to help you decide which nuritional supplements are right for you or shop now at one of our preferred retail partners.</p>                <a id="find-practitioner-link" class="button button-default button-white button-block" href="http://www.pureencapsulations.com/customer-service/practitioner-locator/" >Find a practitioner</a>
+                <div class="seprator-centered">
+                    Or                </div>
+                <a id="view-retailers-link" class="button button-default button-white button-block" href="http://www.pureencapsulations.com/retail-partners/" >View Our Preferred Retailers</a>
+            </div>
+        </div>
+    </div>
+</div><script type="text/javascript">
+    //<![CDATA[
+    document.observe("dom:loaded", function() {
+    
+        jQuery("#mobile-navigation button.button-get_started").on("click", function(){
+            ga('send', 'event', 'Get Started', 'Click', 'Get Started Header Link');
+        });
+    
+        jQuery("#footer button.button-get_started").on("click", function(){
+            ga('send', 'event', 'Get Started', 'Click', 'Get Started Footer Link');
+        });
+    
+        jQuery("#registration-steps .step-01 button[data-step=4]").on("click", function(){
+            ga('send', 'event', 'Get Started', 'Click', 'Step 1 Practitioner Yes');
+        });
+    
+        jQuery("#registration-steps .step-01 button[data-step=2]").on("click", function(){
+            ga('send', 'event', 'Get Started', 'Click', 'Step 1 Practitioner No');
+        });
+    
+        jQuery("#registration-steps .step-01 a#login-link").on("click", function(){
+            ga('send', 'event', 'Get Started', 'Click', 'Step 1 Login Link');
+        });
+    
+        jQuery("#registration-steps .step-01 a#help-link").on("click", function(){
+            ga('send', 'event', 'Get Started', 'Click', 'Step 1 Get Help Link');
+        });
+    
+        jQuery("#registration-steps .step-02 button[data-step=3]").on("click", function(){
+            ga('send', 'event', 'Get Started', 'Click', 'Consumer Step 2 Yes I have a Practitioner Link');
+        });
+    
+        jQuery("#registration-steps .step-02 button[data-step=6]").on("click", function(){
+            ga('send', 'event', 'Get Started', 'Click', 'Consumer Step 2 No I don’t have a Practitioner Link');
+        });
+    
+        jQuery("#registration-steps .step-03 a#yes-fulfillment-link").on("click", function(){
+            ga('send', 'event', 'Get Started', 'Click', 'Consumer Step 3 Has Practioner and Fulfillment Code');
+        });
+    
+        jQuery("#registration-steps .step-03 a#no-fulfillment-link").on("click", function(){
+            ga('send', 'event', 'Get Started', 'Click', 'Consumer Step 3 Has Practitioner and No Fulfillment Code');
+        });
+    
+        jQuery("#registration-steps .step-04 button[data-step=5]").on("click", function(){
+            ga('send', 'event', 'Get Started', 'Click', 'Practitioner Step 2 Create Account Link');
+        });
+    
+        jQuery("#registration-steps .step-04 a#resource-link").on("click", function(){
+            ga('send', 'event', 'Get Started', 'Click', 'Practitioner Step 2 Practitioner Resources Link');
+        });
+    
+        jQuery("#registration-steps .step-04 a#doximity_login").on("click", function(){
+            ga('send', 'event', 'Get Started', 'Click', 'Practitioner Step 2 Doximity Link');
+        });
+    
+        jQuery("#registration-steps .step-05 form#create_profile_modal").on("submit", function(){
+            ga('send', 'event', 'Get Started', 'Click', 'Practitioner Step 3 Next Link');
+        });
+    
+        jQuery("#registration-steps .step-06 a#find-practitioner-link").on("click", function(){
+            ga('send', 'event', 'Get Started', 'Click', 'Consumer Step 3 No Practioner Find Practioner Link');
+        });
+    
+        jQuery("#registration-steps .step-06 a#view-retailers-link").on("click", function(){
+            ga('send', 'event', 'Get Started', 'Click', 'Consumer Step 3 No Practitioner Preferred Retailers Link');
+        });
+    
+    });
+    //]]>
+</script>

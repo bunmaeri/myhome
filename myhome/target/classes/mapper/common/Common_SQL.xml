@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="common">
+	<sql id="pagingPre">
+		<![CDATA[
+   			SELECT T2.*
+             FROM (SELECT @RNUM:=@RNUM+1 AS RM,
+                          T1.*
+                    FROM (
+ 		]]>
+ 	</sql>
+ 	
+ 	<sql id="pagingSub">
+ 		<![CDATA[
+			              ) AS T1, (SELECT @RNUM:=0) AS R 
+                   )  AS T2
+             LIMIT #{per_page} OFFSET #{page}
+ 		]]>
+ 	</sql>
+ 	
+ 	<select id="totalCnt">
+ 		<![CDATA[
+            SELECT SQL_CALC_FOUND_ROWS *
+ 		]]>
+ 	</select>
+ 	
+ 	<select id="orderStatusName" parameterType="String" resultType="String">
+        SELECT name
+          FROM dr_order_status
+         WHERE order_status_id = #{value}
+    </select>
+    
+    <select id="noticeList" parameterType="hashmap" resultType="hashmap">
+        SELECT *
+          FROM my_contents
+         WHERE language_id = #{language_id}
+           AND code = #{code}
+           AND status = 1
+         ORDER BY sort_order ASC
+    </select>
+    
+    <select id="searchTotal" parameterType="hashmap" resultType="int">
+      <![CDATA[
+        SELECT COUNT(*) AS total 
+          FROM my_product p
+               LEFT JOIN my_product_description pd ON (p.product_id = pd.product_id) 
+               LEFT JOIN my_product_to_store p2s ON (p.product_id = p2s.product_id) 
+         WHERE p.product_id not in (663,662) 
+           AND pd.language_id = #{language_id}
+           AND p.status = '1'
+           AND p.date_available <= NOW()
+          AND (pd.name LIKE CONCAT('%',#{q},'%')     
+               OR pd.tag LIKE CONCAT('%',#{q},'%')
+               )
+       ]]>
+    </select>
+   
+    <select id="search" parameterType="hashmap" resultType="hashmap">
+      <include refid="common.pagingPre"/> 
+      <![CDATA[
+        SELECT p.product_id,
+               p.image,
+               pd.name,
+               p.price,
+              (SELECT price FROM my_product_special ps WHERE ps.product_id = p.product_id AND ps.customer_group_id IN('0',#{customer_group_id}) AND ((ps.date_start = '0000-00-00' OR ps.date_start < NOW()) AND (ps.date_end = '0000-00-00' OR ps.date_end > NOW())) ORDER BY ps.priority ASC, ps.price ASC LIMIT 1) AS special
+          FROM my_product p
+               LEFT JOIN my_product_description pd ON (p.product_id = pd.product_id)
+         WHERE p.product_id not in (663,662)
+           AND pd.language_id = #{language_id} 
+           AND p.status = '1'
+           AND p.date_available <= NOW()
+           AND (pd.name LIKE CONCAT('%',#{q},'%')     
+                OR pd.tag LIKE CONCAT('%',#{q},'%')
+               )
+         GROUP BY p.product_id
+         ORDER BY LCASE(pd.name) ASC
+       ]]>
+       <include refid="common.pagingSub"/> 
+    </select>
+</mapper>

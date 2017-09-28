@@ -1,0 +1,67 @@
+.catalog-product-compare-index .compare-container {
+    padding: 30px;
+}
+.catalog-product-compare-index .page-title {
+    margin-top: 0;
+    position: relative;
+}
+.catalog-product-compare-index .page-title h1 {
+    font-size: 40px;
+    margin-top: 0;
+}
+.catalog-product-compare-index .page-title .button-small {
+    width: 206px;
+    padding-right: 72px;
+}
+.catalog-product-compare-index .data-table th {
+    font-size: 16px;
+    text-transform: uppercase;
+    font-weight: 400;
+    padding: 20px;
+    vertical-align: top;
+}
+.catalog-product-compare-index .data-table td {
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 20px;
+    vertical-align: top;
+    line-height: 1.625em;
+}
+.catalog-product-compare-index .data-table .product-image {
+    position: relative;
+}
+.catalog-product-compare-index .data-table .product-image .image {
+    display: block;
+    padding: 20px;
+    text-align: center;
+}
+.catalog-product-compare-index .data-table .product-image .button-close {
+    right: auto;
+    left: 0;
+}
+.catalog-product-compare-index .button-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 16px;
+    padding: 13px;
+    width: auto;
+}
+.catalog-product-compare-index .data-table .product-name a, .catalog-product-compare-index .data-table h3 {
+    font-size: 16px;
+    line-height: 18px;
+    font-weight: 400;
+    text-transform: none;
+    margin: 0;
+}
+.catalog-product-compare-index .data-table .button-small {
+    width:90%;
+}
+.catalog-product-compare-index .data-table .product-image .ribbon{position:absolute;top:0px;left:20px}
+.catalog-product-compare-index .data-table .price-old {
+    color: #ffba00;
+    font-size: 16px;
+    padding-left: 10px;
+    text-decoration: line-through;
+}

@@ -1,0 +1,210 @@
+.my-account .page-title h2 {
+    font-size: 36px;
+    margin: 0 0 40px 0;
+    font-weight: 400;
+}
+.my-account .order-items .totals-container, .my-account .pager, .patients-toolbar {
+}
+.my-account .pager .amount {
+    display: ;
+}
+.my-account .pager .limiter {
+    float: right;
+    font-size: 12px;
+    font-weight: 300;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-align: center;
+    align-items: center;
+    white-space: nowrap;
+}
+.my-account .pager .limiter label {
+    margin: 0;
+    font-size: 12px;
+}
+.my-account .pager .limiter .custom-styled-select {
+    width: 100px;
+    margin: 20px 10px;
+}
+.my-account .order-items .totals-container:after, .my-account .order-items .totals-container:before, .my-account .pager:after, .my-account .pager:before, .patients-toolbar:after, .patients-toolbar:before {
+    content: " ";
+    display: table;
+    line-height: 0;
+}
+.my-account .order-items .totals-container .totals {
+    background: #eeefef;
+    border-radius: 4px;
+    padding: 30px 15px;
+    color: #14328c;
+    margin: 20px 0;
+    float: right;
+}
+.my-account .order-items .totals-container:after, .my-account .pager:after, .patients-toolbar:after {
+    clear: both;
+}
+.my-account .order-items .totals-container:after, .my-account .order-items .totals-container:before, .my-account .pager:after, .my-account .pager:before, .patients-toolbar:after, .patients-toolbar:before {
+    content: " ";
+    display: table;
+    line-height: 0;
+}
+.my-account .order-page .col2-set .info-box .box-title {
+    font-size: 16px;
+    margin: 0 0 10px 0;
+    font-weight: 700;
+}
+.my-account .order-page .col2-set .info-box .box-content {
+    font-style: normal;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 20px;
+}
+.my-account .order-page .col2-set {
+    margin-bottom: 40px;
+}
+.my-account .order-page .col2-set .left-address {
+    border: 1px solid #ddd;
+    padding: 15px;
+    width: 48%;
+    border-radius: 5px;
+}
+.my-account .order-page .col2-set .right-address {
+    border: 1px solid #ddd;
+    padding: 15px;
+    width: 48%;
+    border-radius: 5px;
+    float:right;
+}
+.my-account .order-page .page-title h2 {
+    margin-bottom: 10px;
+}
+.my-account .order-page .page-title {
+    margin-bottom: 20px;
+}
+.my-account .order-items .totals-container .totals #my-orders-total-table td {
+    padding: 5px 0;
+}
+.my-account .order-items .totals-container .totals #my-orders-total-table .total {
+    font-size: 18px;
+}
+.my-account .order-items .totals-container .totals #my-orders-total-table .total td {
+    padding-top: 20px;
+    font-weight: 600;
+}
+.my-wishlist .product-table td {
+    border-bottom: 1px solid #ebebeb;
+}
+.my-account .product-table tr:last-child td {
+    border-bottom: 1px solid #ebebeb;
+}
+.my-wishlist .product-table .product-container {
+    text-align: left;
+    display: -ms-flexbox;
+    display: flex;
+}
+.my-wishlist .product-table .product-container .product-image {
+    -ms-flex-negative: 0;
+    flex-shrink: 0;
+}
+.my-wishlist .product-table .product-container .product-image img {
+    height:150px;
+    width:auto;
+}
+.my-wishlist .product-table .product-container h3 {
+    font-size: 14px;
+    margin: 50px 0 5px 0;
+    font-weight: 400;
+}
+.my-wishlist .product-table .name-desc textarea {
+    width: 200px;
+    height: 130px;
+    font-weight: 400;
+}
+@media screen and (max-width: 768px) {
+.my-wishlist .product-table .name-desc textarea {
+    width: 100%;
+}
+}
+.my-wishlist .product-table .price-box {
+    white-space: nowrap;
+}
+.my-wishlist .product-table .price-box p {
+    margin: 0 0 10px;
+}
+.my-wishlist .product-table .price-box .price {
+    color: #14328c;
+    font-size: 18px;
+}
+my-wishlist .product-table .cart-qty {
+    -ms-flex-pack: center;
+    justify-content: center;
+    margin: 20px 0;
+}
+.cart-qty__minus, .cart-qty__plus {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    line-height: 24px;
+    font-size: 12px;
+    text-align: center;
+    cursor: pointer;
+    background: 0 0;
+    border: 1px solid #14328c;
+    border-radius: 50%;
+    color: #14328c;
+}
+.cart-qty input {
+    width: 44px;
+    text-align: center;
+    margin: 0 8px;
+    color: #14328c;
+    font-weight: 400;
+}
+.row {
+    margin-left: 0;
+    margin-right: 0;
+}
+.my-wishlist .product-table .add-to-cart-alt .cart-qty-container {
+    margin:0 0 10px;
+}
+.my-account .addresses-list.col2-set .info-box .box-border {
+    border: 1px solid #b3b1b1;
+    border-radius: 5px;
+    padding: 25px;
+}
+.my-account .addresses-list.col2-set .info-box .box-title {
+    font-size: 18px;
+    margin: 0 0 10px 0;
+    font-weight: 700;
+}
+.my-account .addresses-list.col2-set .info-box .box-content {
+    font-style: normal;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 20px;
+    min-height:165px;
+}
+.my-account .addresses-list.col2-set .info-box-1 .box-content {
+    font-style: normal;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 20px;
+    min-height:145px;
+}
+.my-account .addresses-list.col2-set .info-box {
+    margin-bottom: 30px;
+    padding-left: 0;
+    padding-right: 10px;
+}
+.my-account .addresses-list.col2-set .sub-title {
+    font-size: 20px;
+}
+.my-account .addresses-list.col2-set .info-box .links a {
+    font-size: 16px;
+    font-weight: 400;
+}
+.table td{padding:10px 18px;border:none;background-color:#fff;text-align:center;font-size:16px;font-weight:400}
+.product-table .product .product-name {
+    font-size: 16px;
+    font-weight: 400;
+    margin: 0;
+}

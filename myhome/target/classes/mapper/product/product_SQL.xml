@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="product">
+    
+    <select id="productInfo" parameterType="String" resultType="hashmap">
+        <![CDATA[
+            SELECT p.*,
+                   pd.name,
+                   pd.description,
+                   pd.tag,
+                   pd.meta_title,
+                   pd.meta_description,
+                   pd.meta_keyword,
+                  (SELECT ps.price FROM my_product_special ps WHERE ps.product_id = p.product_id AND ps.customer_group_id IN('0',#{customer_group_id}) AND ((ps.date_start = '0000-00-00' OR ps.date_start < NOW()) AND (ps.date_end = '0000-00-00' OR ps.date_end > NOW())) ORDER BY ps.priority ASC, ps.price ASC LIMIT 1) AS special
+              FROM my_product p LEFT JOIN my_product_description pd ON (p.product_id = pd.product_id)
+             WHERE p.product_id = #{value}
+        ]]>
+    </select>
+    
+    <update id="updateProductViews" parameterType="String">
+        <![CDATA[
+            UPDATE my_product 
+               SET viewed = viewed+1
+             WHERE product_id = #{value}
+        ]]>
+    </update>
+    
+    <select id="isRecentlyView" parameterType="hashmap" resultType="int">
+        SELECT COUNT(*) AS total_cnt
+          FROM my_product_recently_view
+         WHERE product_id = #{product_id}
+           AND customer_id = #{customer_id}
+    </select>
+    
+    <insert id="createRecentlyView" parameterType="hashmap">
+        <![CDATA[
+            INSERT INTO my_product_recently_view(product_id, customer_id, date_added)
+            VALUES
+            (
+                #{product_id},
+                #{customer_id},
+                NOW()
+            )
+        ]]>
+    </insert>
+    
+    <update id="updateRecentlyView" parameterType="hashmap">
+        <![CDATA[
+            UPDATE my_product_recently_view 
+               SET date_added = NOW()
+             WHERE product_id = #{product_id}
+               AND customer_id = #{customer_id}
+        ]]>
+    </update>
+    
+    <select id="listRecentlyView" parameterType="hashmap" resultType="hashmap">
+        <![CDATA[
+            SELECT p.product_id,
+                   p.image,
+                   pd.name
+              FROM my_product p, my_product_description pd, my_product_recently_view pr
+             WHERE p.product_id = pd.product_id
+               AND pd.product_id = pr.product_id
+               AND pr.customer_id = #{customer_id}
+               AND pr.product_id != #{product_id}
+             ORDER BY pr.date_added DESC
+             LIMIT 0, 5
+        ]]>
+    </select>
+    
+    <select id="listCookieRecentlyView" parameterType="hashmap" resultType="hashmap">
+        <![CDATA[
+            SELECT p.product_id,
+                   p.image,
+                   pd.name
+              FROM my_product p, my_product_description pd
+             WHERE p.product_id = pd.product_id
+               AND pd.product_id IN (#{products})
+             LIMIT 0, 5
+        ]]>
+    </select>
+    
+    <select id="location" parameterType="String" resultType="String">
+        <![CDATA[
+            SELECT name
+              FROM dr_location
+             WHERE location_id = #{value}
+        ]]>
+    </select>
+    
+    <select id="stockStatus" parameterType="hashmap" resultType="String">
+        <![CDATA[
+            SELECT name
+              FROM dr_stock_status
+             WHERE stock_status_id = #{stock_status_id}
+               AND language_id = #{language_id}
+        ]]>
+    </select>
+    
+    <select id="listCompareProducts" parameterType="List" resultType="hashmap">
+        SELECT p.product_id,
+               p.image,
+               pd.name
+          FROM my_product p, my_product_description pd
+        <where>
+               p.product_id = pd.product_id
+           AND p.product_id in
+           <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+               #{item}
+           </foreach>
+        </where>
+    </select>
+    
+    <select id="viewCompareProducts" parameterType="hashmap" resultType="hashmap">
+      <![CDATA[
+        SELECT p.product_id,
+               p.image,
+               pd.name,
+               p.price,
+              (SELECT price FROM my_product_special ps WHERE ps.product_id = p.product_id AND ps.customer_group_id IN('0',#{customer_group_id}) AND ((ps.date_start = '0000-00-00' OR ps.date_start < NOW()) AND (ps.date_end = '0000-00-00' OR ps.date_end > NOW())) ORDER BY ps.priority ASC, ps.price ASC LIMIT 1) AS special,
+               pd.description,
+               p.model,
+              (SELECT m.name FROM dr_manufacturer m WHERE m.manufacturer_id = p.manufacturer_id) AS manufacturer_name,
+               CASE WHEN (SELECT pq.quantity FROM product_quantity pq WHERE pq.model=p.model)>0 THEN '재고있음'
+                    ELSE '재고부족'
+                    END AS availability,
+               p.weight
+          FROM my_product p
+               LEFT JOIN my_product_description pd ON (p.product_id = pd.product_id)
+         WHERE pd.language_id = #{language_id} 
+           AND p.status = '1'
+           AND p.product_id IN
+      ]]>
+           <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+               #{item}
+           </foreach>
+    </select>
+</mapper>
