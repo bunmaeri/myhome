@@ -25,7 +25,7 @@ public class LoggerAspect {
 		else if (type.indexOf("DAO") > -1) {
 			name = "DAO  \t\t:  ";
 		}
-		log.debug(name + type + "." + joinPoint.getSignature().getName() + "()");
+//		log.debug(name + type + "." + joinPoint.getSignature().getName() + "()");
 		return joinPoint.proceed();
 	}
 }

@@ -18,12 +18,12 @@ public class StoreUtil {
 //	private static final String geolite = "/Users/jo/Drpure/_new/geolite/"; // local
 	
 	public static int getLanguageId(){
-		log.debug("-- Language id : " + language_id + "\n");
+//		log.debug("-- Language id : " + language_id + "\n");
 		return language_id;
 	}
 	
 	public static String getLanguageName(){
-		log.debug("-- Language name : " + language_name + "\n");
+//		log.debug("-- Language name : " + language_name + "\n");
 		return language_name;
 	}
 	
