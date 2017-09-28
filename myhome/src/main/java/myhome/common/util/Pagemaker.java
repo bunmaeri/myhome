@@ -94,7 +94,7 @@ public class Pagemaker {
 			return;
 		}
 		this.count = count;
-		System.out.println("총 컬럼 갯수 = " + count);
+//		System.out.println("총 컬럼 갯수 = " + count);
 		calcPage();
 	}
 
@@ -107,10 +107,10 @@ public class Pagemaker {
 			this.totalPage++;
 		}
 		// 현재 페이지번호를 기준으로 끝 페이지를 계산한다.
-		System.out.println("page = " +page);
-		System.out.println("tempEnd = "+tempEnd);
-		System.out.println("this.count =" +this.count);
-		System.out.println("totalPage =" + this.totalPage);
+//		System.out.println("page = " +page);
+//		System.out.println("tempEnd = "+tempEnd);
+//		System.out.println("this.count =" +this.count);
+//		System.out.println("totalPage =" + this.totalPage);
 		
 		// 시작 페이지 계산
 		this.start = tempEnd - (PER - 1);
@@ -119,7 +119,7 @@ public class Pagemaker {
 		} else { 
 			this.end = tempEnd; // 실제 count가 tempEnd보다 많을경우 
 		}
-		System.out.println("this.end = "+this.end);
+//		System.out.println("this.end = "+this.end);
 		this.prev = this.page != 1;
 		this.next = this.page != this.totalPage;
 		
