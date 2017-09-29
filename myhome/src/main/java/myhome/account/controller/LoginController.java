@@ -109,8 +109,6 @@ public class LoginController {
             	emv.addObject("notice", map);
 				return emv;
             } else {
-            	log.error("inPwd:"+inPwd);
-            	log.error("inPwd:"+CommonUtils.shaEncoder(inPwd));
             	if(!CommonUtils.shaMatches(dbPwd, inPwd)) {
                 	emv.addObject("email", ObjectUtils.null2void(commandMap.get("email")));
                 	emv.addObject("errorMsg", "이메일과 비밀번호가 일치하지 않습니다!"); 

@@ -28,7 +28,7 @@ import net.authorize.api.controller.base.ApiOperationBase;
 public class AuthorizeCreditCard {
 
 	public static Map<String,Object> run(Map<String,Object> map) {
-		System.err.println("==================================================>AuthorizeCreditCard.run()");
+//		System.err.println("==================================================>AuthorizeCreditCard.run()");
     	String apiLoginId = ObjectUtils.null2void(map.get("apiLoginId"));
     	String transactionKey = ObjectUtils.null2void(map.get("transactionKey"));
     	String amount = ObjectUtils.null2void(map.get("amount"));
@@ -195,7 +195,7 @@ public class AuthorizeCreditCard {
     }
 	
 	public static Map<String,Object> runTest() {
-		System.err.println("==================================================>AuthorizeCreditCard.runTest()");
+//		System.err.println("==================================================>AuthorizeCreditCard.runTest()");
 		Map<String,Object> rtnMap = new HashMap<String,Object>();
 		rtnMap.put("result", "success");
 		rtnMap.put("transId", "test");

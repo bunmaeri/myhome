@@ -409,8 +409,8 @@ public class ShippingAddressController extends BaseController {
     	}
     	
     	if(ObjectUtils.null2void(map.get("country_id")).equals("113")) {
-    		System.err.println(map.get("country_id"));
-        	System.err.println(ObjectUtils.null2void(map.get("requisition_id")).length());
+//    		System.err.println(map.get("country_id"));
+//        	System.err.println(ObjectUtils.null2void(map.get("requisition_id")).length());
     		if(null==map.get("requisition_id") || ObjectUtils.null2void(map.get("requisition_id")).length()==0) {
 	    		BaseController.setCustomSession(session, CheckoutLanguage.Error.SHIPPING_ADDRESS_REQUISITION_ERROR, Session.CHECKOUT_SHIPPING_ADDRESS_ERROR);
 	    		return emv;
