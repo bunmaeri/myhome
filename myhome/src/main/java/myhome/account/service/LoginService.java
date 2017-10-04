@@ -23,6 +23,14 @@ public interface LoginService {
     CustomerDTO login(Map<String, Object> map) throws Exception;
     
     /**
+	 * 고객정보 & 주소 조회
+	 * @param customer_id
+	 * @return
+	 * @throws Exception
+	 */
+    CustomerDTO customerAndAddress(String customer_id) throws Exception;
+    
+    /**
 	 * 고객정보 조회
 	 * @param map
 	 * @return
@@ -71,4 +79,9 @@ public interface LoginService {
 	 * 회원 로그인 이력 추가
 	 */
 	void addCustomerLogin(Map<String, Object> map) throws Exception;
+	
+	/**
+	 * 회원 비밀번호 이력 추가
+	 */
+	void addCustomerString(Map<String, Object> map) throws Exception;
 }

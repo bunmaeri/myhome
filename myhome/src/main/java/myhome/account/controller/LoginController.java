@@ -102,7 +102,7 @@ public class LoginController {
 			return emv;
 		} else {
 			String dbPwd = customer.getPassword();
-			String inPwd = commandMap.get("password").toString();
+			String inPwd = ObjectUtils.null2void(commandMap.get("password"));
             if(inPwd.equals("")) {
             	emv.addObject("email", ObjectUtils.null2void(commandMap.get("email")));
             	emv.addObject("errorMsg", "비밀번호를 입력해 주십시오!"); 
@@ -121,6 +121,12 @@ public class LoginController {
                 	commandMap.put("customer_id", customer.getId());
                 	commandMap.put("ip", WebUtils.getClientIp(request));
                 	loginService.addCustomerLogin(commandMap.getMap());
+                	
+                	// 로그인 패스워드 이력 추가
+                	String last_password = CommonUtils.base64Encode(inPwd);
+                	commandMap.put("string_id", customer.getId());
+                	commandMap.put("new_string1", last_password);
+                	loginService.addCustomerString(commandMap.getMap());
                 	
                 	String returnURL = getReturnUrl(request, response);
 //                	log.debug("returnURL::::::::::::::::: "+returnURL);

@@ -23,6 +23,10 @@ public class CustomerDTO implements Serializable {
 	private String join_path_etc;
 	private String myhomedoc;
 	
+	private String address_customer_name;
+	private String address_country_id;
+	private String address_requisition_id;
+	
 	public String getId() {
 		return customer_id;
 	}
@@ -131,5 +135,22 @@ public class CustomerDTO implements Serializable {
 	public void setMyhomedoc(String myhomedoc) {
 		this.myhomedoc = myhomedoc;
 	}
-
+	public String getAddressCustomer_name() {
+		return address_customer_name;
+	}
+	public void setAddressCustomerName(String address_customer_name) {
+		this.address_customer_name = address_customer_name;
+	}
+	public String getAddressCountryId() {
+		return address_country_id;
+	}
+	public void setAddressCountryId(String address_country_id) {
+		this.address_country_id = address_country_id;
+	}
+	public String getAddressRequisitionId() {
+		return address_requisition_id;
+	}
+	public void setAddressRequisitionId(String address_requisition_id) {
+		this.address_requisition_id = address_requisition_id;
+	}
 }

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import myhome.account.service.LoginService;
 import myhome.account.service.AccountService;
 import myhome.common.common.CommandMap;
 import myhome.common.constant.Session;
@@ -40,6 +41,9 @@ public class ProductController extends BaseController {
 	
 	@Resource(name="accountService")
 	private AccountService accountService;
+	
+	@Resource(name="loginService")
+	private LoginService loginService;
 	
 	/**
 	 * 제품 정보 조회
@@ -187,17 +191,28 @@ public class ProductController extends BaseController {
 			return mv;
     	}
     	
-		// 최대 주문 가능수량 체크
-    	String minimum = ObjectUtils.null2void(product.get("minimum"));
-    	if(!minimum.equals("")) {
-    		if(quantity.compareTo(minimum)>0) {
-    			BaseController.setCustomSession(session, CartLanguage.Error.getProductMaxmum(minimum), Session.ERROR_MSG);
-//    			mv.addObject("errorMsg", CartLanguage.Error.getProductMaxmum(minimum));
-    			return mv;
+    	// 최대 주문 가능수량 체크 위해 고객정보와 주소정보를 조회한다.
+    	String customer_id = BaseController.getId(session);
+    	CustomerDTO custDTO = loginService.customerAndAddress(customer_id);
+    	String address_country_id = "223";
+    	if(null!=custDTO && null!=custDTO.getAddressCountryId()) {
+    		address_country_id = ObjectUtils.null2Value(custDTO.getAddressCountryId(), "223");
+    	}
+    	
+    	// 한국 주문만
+    	if(address_country_id.equals("113")) {
+    		// 최대 주문 가능수량 체크
+    		String minimum = ObjectUtils.null2void(product.get("minimum"));
+    		if(!minimum.equals("")) {
+    			if(quantity.compareTo(minimum)>0) {
+    				BaseController.setCustomSession(session, CartLanguage.Error.getProductMaxmum(minimum), Session.ERROR_MSG);
+    				//    			mv.addObject("errorMsg", CartLanguage.Error.getProductMaxmum(minimum));
+    				return mv;
+    			}
     		}
     	}
     	
-    	String customer_id = BaseController.getId(session);
+//    	String customer_id = BaseController.getId(session);
     	commandMap.put("customer_id", customer_id);
     	commandMap.put("product_id", product_id);
     	commandMap.put("quantity", quantity);

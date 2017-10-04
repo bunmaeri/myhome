@@ -108,6 +108,9 @@ public class CheckoutController extends BaseController {
     	shippingAddressMap.put("address", outil.addressView(shippingAddressMap));
     	mv.addObject("shipping_address", shippingAddressMap);
     	
+    	String address_country_id = "223";
+    	address_country_id = ObjectUtils.null2Value(shippingAddressMap.get("country_id"), "223");
+    	
     	/**
     	 * 장바구니 총합계
     	 */
@@ -120,12 +123,14 @@ public class CheckoutController extends BaseController {
 		Map<String,Object> totals = cartService.cartTotal(commandMap.getMap());
 		BigDecimal totalPrice = (BigDecimal) totals.get("value");
 		int totalQuantity = Integer.parseInt(ObjectUtils.null2void(totals.get("sum_quantity")));
-		// 주문한도액, 주문상품 수량을 초과했을 때..
-		if(totalPrice.compareTo(new BigDecimal(code.getValueInt("checkout_max_total"))) > 0 || totalQuantity > code.getValueInt("checkout_max_product_count")) {
-			String CART_OVER_LIMIT = Message.Error.setCART_OVER_LIMIT(code.getValue("checkout_max_total"), code.getValue("checkout_max_product_count"));
-			BaseController.setCustomSession(session, CART_OVER_LIMIT, Session.CART_OVER_LIMIT);
-//			session.setAttribute(Session.CART_OVER_LIMIT, CART_OVER_LIMIT);
-			errList.add(CART_OVER_LIMIT);
+		// 주문한도액, 주문상품 수량을 초과했을 때..(한국 주문만)
+		if(address_country_id.equals("113")) {
+			if(totalPrice.compareTo(new BigDecimal(code.getValueInt("checkout_max_total"))) > 0 || totalQuantity > code.getValueInt("checkout_max_product_count")) {
+				String CART_OVER_LIMIT = Message.Error.setCART_OVER_LIMIT(code.getValue("checkout_max_total"), code.getValue("checkout_max_product_count"));
+				BaseController.setCustomSession(session, CART_OVER_LIMIT, Session.CART_OVER_LIMIT);
+				//			session.setAttribute(Session.CART_OVER_LIMIT, CART_OVER_LIMIT);
+				errList.add(CART_OVER_LIMIT);
+			}
 		}
     			
     	/**
@@ -150,6 +155,21 @@ public class CheckoutController extends BaseController {
 //				session.setAttribute(Session.CART_OUT_OF_STOCK, Message.Error.CART_OUT_OF_STOCK);
 				errList.add(Message.Error.CART_OUT_OF_STOCK);
 				break;
+			}
+			
+			chk_quantity = 0;
+			chk_quantity = Integer.parseInt(ObjectUtils.null2Value(tempMap.get("quantity"),"0"));
+			int chk_minimum = Integer.parseInt(ObjectUtils.null2Value(tempMap.get("minimum"),"0"));
+			
+			// 제품별로 최대 구매수량 체크 (한국 주문만)
+			if(address_country_id.equals("113")) {
+				if(chk_quantity > chk_minimum) {
+					String CART_PRODUCT_OVER_LIMIT = Message.Error.setCART_PRODUCT_OVER_LIMIT(ObjectUtils.null2Value(tempMap.get("minimum"),"0"));
+					//session.setAttribute(Session.CART_PRODUCT_OVER_LIMIT, CART_PRODUCT_OVER_LIMIT);
+					errList.add(Message.Error.CART_PRODUCT_OVER_LIMIT_MSG);
+					tempMap.put("error_limit", CART_PRODUCT_OVER_LIMIT);
+					//break;
+				}
 			}
 		}
 		mv.addObject("list", list);

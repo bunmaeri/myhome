@@ -24,7 +24,7 @@
 //]]>
 </script>
 <![endif]-->
-<link rel="stylesheet" type="text/css" href="<c:url value='/css/main.css'/>?2017097" media="all" />
+<link rel="stylesheet" type="text/css" href="<c:url value='/css/main.css'/>?20171002" media="all" />
 <c:forEach items="${css}" var="css">
 <link rel="stylesheet" type="text/css" href="<c:url value='${css}'/>?2017092412" media="all" />
 </c:forEach>

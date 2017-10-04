@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import myhome.account.service.LoginService;
 import myhome.account.service.AccountService;
 import myhome.checkout.service.CartService;
 import myhome.common.common.CommandMap;
@@ -41,6 +42,9 @@ public class CartController extends BaseController {
 	@Resource(name="informationService")
 	private InformationService informationService;
 	
+	@Resource(name="loginService")
+	private LoginService loginService;
+	
 	private int language_id = StoreUtil.getLanguageId();
 	
 	/**
@@ -66,6 +70,15 @@ public class CartController extends BaseController {
     	CustomerDTO customer = (CustomerDTO) session.getAttribute(Session.CUSTOMER);
     	String customer_id = BaseController.getId(session);
    
+    	// 고객정보와 주소 정보 조회한다.
+//    	System.err.println("customer_id>>>>>>>>>>"+customer_id);
+    	CustomerDTO custDTO = loginService.customerAndAddress(customer_id);
+    	String address_country_id = "223";
+//    	System.err.println("custDTO.getAddressCountryId()>>>>>>>>>>"+custDTO.getAddressCountryId());
+    	if(null!=custDTO && null!=custDTO.getAddressCountryId()) {
+    		address_country_id = ObjectUtils.null2Value(custDTO.getAddressCountryId(), "223");
+    	}
+    	
     	// 총합계
     	if(null!=customer && null!=customer.getCustomerGroupId() && !customer.getCustomerGroupId().equals("")) {
     		commandMap.put("customer_group_id", customer.getCustomerGroupId());
@@ -76,11 +89,13 @@ public class CartController extends BaseController {
 		Map<String,Object> totals = cartService.cartTotal(commandMap.getMap());
 		BigDecimal totalPrice = (BigDecimal) totals.get("sum_price"); // 총금액(33: Cosmetic 제외)
 		int totalQuantity = Integer.parseInt(ObjectUtils.null2void(totals.get("sum_quantity"))); // 총수량(33: Cosmetic 제외)
-		// 주문한도액, 주문상품 수량을 초과했을 때..
-		if(totalPrice.compareTo(new BigDecimal(code.getValueInt("checkout_max_total"))) > 0 || totalQuantity > code.getValueInt("checkout_max_product_count")) {
-			String CART_OVER_LIMIT = Message.Error.setCART_OVER_LIMIT(code.getValue("checkout_max_total"), code.getValue("checkout_max_product_count"));
-			session.setAttribute(Session.CART_OVER_LIMIT, CART_OVER_LIMIT);
-			errList.add(CART_OVER_LIMIT);
+		// 주문한도액, 주문상품 수량을 초과했을 때.. (한국 주문만 해당)
+		if(address_country_id.equals("113")) {
+			if(totalPrice.compareTo(new BigDecimal(code.getValueInt("checkout_max_total"))) > 0 || totalQuantity > code.getValueInt("checkout_max_product_count")) {
+				String CART_OVER_LIMIT = Message.Error.setCART_OVER_LIMIT(code.getValue("checkout_max_total"), code.getValue("checkout_max_product_count"));
+				session.setAttribute(Session.CART_OVER_LIMIT, CART_OVER_LIMIT);
+				errList.add(CART_OVER_LIMIT);
+			}
 		}
  
     	// 장바구니 목록 조회
@@ -106,13 +121,16 @@ public class CartController extends BaseController {
 			chk_quantity = 0;
 			chk_quantity = Integer.parseInt(ObjectUtils.null2Value(tempMap.get("quantity"),"0"));
 			int chk_minimum = Integer.parseInt(ObjectUtils.null2Value(tempMap.get("minimum"),"0"));
-			if(chk_quantity > chk_minimum) {
-				// 제품별로 최대 구매수량 체크
-				String CART_PRODUCT_OVER_LIMIT = Message.Error.setCART_PRODUCT_OVER_LIMIT(ObjectUtils.null2Value(tempMap.get("minimum"),"0"));
-				//session.setAttribute(Session.CART_PRODUCT_OVER_LIMIT, CART_PRODUCT_OVER_LIMIT);
-				errList.add(Message.Error.CART_PRODUCT_OVER_LIMIT_MSG);
-				tempMap.put("error_limit", CART_PRODUCT_OVER_LIMIT);
-				//break;
+			// 제품별로 최대 구매수량 체크 (한국 주문만)
+			if(address_country_id.equals("113")) {
+				if(chk_quantity > chk_minimum) {
+					// 제품별로 최대 구매수량 체크
+					String CART_PRODUCT_OVER_LIMIT = Message.Error.setCART_PRODUCT_OVER_LIMIT(ObjectUtils.null2Value(tempMap.get("minimum"),"0"));
+					//session.setAttribute(Session.CART_PRODUCT_OVER_LIMIT, CART_PRODUCT_OVER_LIMIT);
+					errList.add(Message.Error.CART_PRODUCT_OVER_LIMIT_MSG);
+					tempMap.put("error_limit", CART_PRODUCT_OVER_LIMIT);
+					//break;
+				}
 			}
 			rtnList.add(tempMap);
 		}

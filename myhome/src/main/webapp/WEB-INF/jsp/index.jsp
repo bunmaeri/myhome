@@ -3,21 +3,21 @@
 <div id="global-messages" class="container-fluid"></div>
     <div class="main" role="main" style="padding-top:0;padding-bottom:0;">
         <div class="std">
-            <section class="hero banner" data-bg="/image/banner/banner.jpg?20170823" style="padding-bottom:25.3%;background-image: url('/image/banner/banner.jpg?20170823');">
+            <section class="hero banner" data-bg="/image/${notice1.image}" style="padding-bottom:25.3%;background-image: url('/image/${notice1.image}');">
             </section> 
             
-            <section class="banner" data-bg="/image/banner_apple.jpg?20170921">
+            <section class="banner" data-bg="/image/${notice2.image}">
 			    <div class="container-fluid">
 			        <div class="vertical-align">
-			            ${notice1.description}
+			            ${notice2.description}
 			        </div>
 			    </div>
 			</section>
 
-			<section class="banner banner__align-right" data-bg="/image/banner_strawberry.jpg?20170921">
+			<section class="banner banner__align-right" data-bg="/image/${notice3.image}">
 			    <div class="container-fluid">
 			        <div class="vertical-align vertical-align-second">
-                        ${notice2.description}
+                        ${notice3.description}
 			        </div>
 			    </div>
 			</section>

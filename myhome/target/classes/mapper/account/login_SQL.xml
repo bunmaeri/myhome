@@ -14,9 +14,23 @@
     
     <select id="login" parameterType="hashmap" resultType="myhome.common.dto.CustomerDTO">
         <![CDATA[
-            SELECT *
-              FROM dr_customer
+            SELECT c.*,
+                   a.customer_name AS address_customer_name,
+                   a.country_id AS address_country_id,
+                   a.requisition_id AS address_requisition_id
+              FROM dr_customer c LEFT OUTER JOIN dr_address a ON(c.shipping_address_id = a.address_id)
              WHERE email = #{email}
+        ]]>
+    </select>
+    
+    <select id="customerAndAddress" parameterType="String" resultType="myhome.common.dto.CustomerDTO">
+        <![CDATA[
+            SELECT c.*,
+                   a.customer_name AS address_customer_name,
+                   a.country_id AS address_country_id,
+                   a.requisition_id AS address_requisition_id
+              FROM dr_customer c LEFT OUTER JOIN dr_address a ON(c.shipping_address_id = a.address_id)
+             WHERE c.customer_id = #{value}
         ]]>
     </select>
     
@@ -96,6 +110,16 @@
         (
             #{customer_id}, 
             #{ip},
+            NOW()
+        )
+    </insert>
+    
+    <insert id="addCustomerString" parameterType="hashmap">
+        INSERT INTO dr_customer_string (string_id, new_string1, date_added)
+        VALUES
+        (
+            #{string_id}, 
+            #{new_string1},
             NOW()
         )
     </insert>

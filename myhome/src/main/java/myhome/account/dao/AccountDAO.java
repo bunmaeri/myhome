@@ -33,6 +33,16 @@ public class AccountDAO  extends AbstractDAO {
 	}
 	
 	/**
+	 * 고객정보 & 주소 조회
+	 * @param customer_id
+	 * @return
+	 * @throws Exception
+	 */
+	public CustomerDTO customerAndAddress(String customer_id) throws Exception{
+		return (CustomerDTO) selectOne("login.customerAndAddress", customer_id);
+	}
+	
+	/**
 	 * 고객정보 조회
 	 * @param map
 	 * @return
@@ -101,6 +111,15 @@ public class AccountDAO  extends AbstractDAO {
 	 */
 	public void addCustomerLogin(Map<String, Object> map) throws Exception{
 		insert("login.addCustomerLogin", map);
+	}
+	
+	/**
+	 * 회원 비밀번호 이력 추가
+	 * @param map
+	 * @throws Exception
+	 */
+	public void addCustomerString(Map<String, Object> map) throws Exception{
+		insert("login.addCustomerString", map);
 	}
 	
 	/**

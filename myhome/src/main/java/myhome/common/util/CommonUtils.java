@@ -9,6 +9,8 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.codec.binary.Base64;
+
 import org.apache.log4j.Logger;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -192,6 +194,26 @@ public class CommonUtils {
 	public static boolean shaMatches(String encryptStr, String normalStr) {
 		
 		return encryptStr.equals(shaEncoder(normalStr));
+	}
+	
+	/**
+	 * Base64 암호화
+	 * @param encodeStr
+	 * @return
+	 */
+	public static String base64Encode(String str) {
+		byte[] encoded = Base64.encodeBase64(str.getBytes());
+		return new String(encoded);
+	}
+	
+	/**
+	 * Base64 복호화
+	 * @param encodeStr
+	 * @return
+	 */
+	public static String base64Decode(String encodeStr) {
+		byte[] decoded = Base64.decodeBase64(encodeStr);
+		return new String(decoded);
 	}
 	
 	/**

@@ -40,6 +40,15 @@ public class LoginServiceImpl implements LoginService{
 	}
 	
 	/**
+	 * 고객정보 & 주소 조회
+	 * @param customer_id
+	 */
+	@Override
+	public CustomerDTO customerAndAddress(String customer_id) throws Exception {
+		return accountDAO.customerAndAddress(customer_id);
+	}
+	
+	/**
 	 * 고객정보 조회
 	 */
 	@Override
@@ -118,5 +127,13 @@ public class LoginServiceImpl implements LoginService{
 	@Override
 	public void addCustomerLogin(Map<String, Object> map) throws Exception {
 		accountDAO.addCustomerLogin(map);
+	}
+	
+	/**
+	 * 회원 비밀번호 이력 추가
+	 */
+	@Override
+	public void addCustomerString(Map<String, Object> map) throws Exception {
+		accountDAO.addCustomerString(map);
 	}
 }
