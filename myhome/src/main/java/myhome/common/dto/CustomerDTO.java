@@ -22,6 +22,7 @@ public class CustomerDTO implements Serializable {
 	private String join_path_id;
 	private String join_path_etc;
 	private String myhomedoc;
+	private String status;
 	
 	private String address_customer_name;
 	private String address_country_id;
@@ -153,4 +154,11 @@ public class CustomerDTO implements Serializable {
 	public void setAddressRequisitionId(String address_requisition_id) {
 		this.address_requisition_id = address_requisition_id;
 	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	
 }

@@ -2,8 +2,10 @@ package myhome.common.controller;
 
 import java.io.File;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -22,7 +24,7 @@ import myhome.common.service.CommonService;
 import myhome.common.util.Pagemaker;
 import myhome.common.util.ScriptUtils;
 import myhome.common.util.StoreUtil;
-import myhome.product.controller.CategoryController;
+import myhome.product.service.ProductService;
 
 @Controller
 public class CommonController {
@@ -30,6 +32,9 @@ public class CommonController {
 	
 	@Resource(name="commonService")
 	private CommonService commonService;
+	
+	@Resource(name="productService")
+	private ProductService productService;
 	
 	@RequestMapping(value="/common/downloadFile.do")
 	public void downloadFile(CommandMap commandMap, HttpServletResponse response) throws Exception{
@@ -87,12 +92,47 @@ public class CommonController {
     	/**
     	 * 상품 비교 목록 가져오기
     	 */
-    	mv.addObject("compareList", new CategoryController().compareList(session));
+    	mv.addObject("compareList", this.compareList(session));
     	
     	ScriptUtils.categoryScript(mv);
     	return mv;
     }
 	
+	/**
+	 * 제품비교 목록 가져오기(세션에서)
+	 * @param session
+	 * @return
+	 * @throws Exception
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Map<String,Object>> compareList(HttpSession session) throws Exception {
+		List<Map<String,Object>> compareList = null;
+    	
+		Queue<String> queue = (Queue<String>) BaseController.getCustomSession(session, Session.PRODUCTS_COMPARE);
+    	if(null!=queue && !queue.isEmpty()) {
+			List<String> paramList = new ArrayList<String>();
+	    	int size = queue.size();
+	    	String peek = null;
+	    	while(!queue.isEmpty()){
+	    		peek = queue.poll();
+	    		paramList.add(peek);
+	    	}
+	    	if(paramList.size()>0) {
+	    		StringBuffer sb = new StringBuffer();
+		    	sb.append("<ol>");
+		    	compareList = productService.listCompareProducts(paramList);
+				
+				size = paramList.size();
+				for(int i=0;i<size;i++) {
+					queue.offer(paramList.get(i));
+				}
+				BaseController.setCustomSession(session, queue, Session.PRODUCTS_COMPARE); // 다시 세션에 저장한다.
+	    	} else {
+	    		BaseController.setCustomSession(session, null, Session.PRODUCTS_COMPARE); // 다시 세션에 저장한다.
+	    	}
+    	}
+		return compareList;
+	}
 	/**
 	 * 톰캣서버 활성화 여부 체크
 	 * @param commandMap

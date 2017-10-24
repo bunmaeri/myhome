@@ -39,6 +39,7 @@
               FROM my_cart c, my_product p LEFT JOIN my_product_description pd ON (p.product_id = pd.product_id)
              WHERE c.product_id = p.product_id
                AND c.customer_id = #{customer_id}
+               AND pd.language_id = 1
                   ) m
         ]]>
     </select>
@@ -73,7 +74,6 @@
                IFNULL(SUM(CASE WHEN m.special!=-1 AND m.special!=0 THEN m.special * m.quantity
                                ELSE m.sum_price
                                END),0) AS sum_price,
-               IFNULL(SUM(m.sum_price),0) AS sum_price,
                IFNULL(SUM(m.sum_quantity),0) AS sum_quantity
          FROM (
         SELECT 'total' AS code,

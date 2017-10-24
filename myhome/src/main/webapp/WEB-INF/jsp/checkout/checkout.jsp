@@ -60,6 +60,7 @@
                                                 <div class="custom-radio">
                                                     <input name="shipping_method_carrier" type="radio" id="shipping_method_carrier${loop.index}" <c:if test="${item.code==shipping_method.code}">checked="checked"</c:if> class="radio shipping_method_carrier" value="${loop.index}">
                                                     <label for="shipping_method_carrier${loop.index}">${item.name}</label>
+                                                    <input name="shipping_method_code" type="hidden" id="shipping_method_code${loop.index}" value="${item.code}">
                                                     <input name="shipping_method_cost" type="hidden" id="shipping_method_cost${loop.index}" value="${item.cost}">
                                                     <input name="shipping_method_name" type="hidden" id="shipping_method_name${loop.index}" value="${item.name}">
                                                 </div>
@@ -415,9 +416,10 @@ $(".img-responsive").click(function(){
 // 배송방법 선택
 $('.shipping_method_carrier').on('click', function() {
 	var carrier_index = $('input:radio[name="shipping_method_carrier"]:checked').val();
-	var carrier_name = $("#shipping_method_name"+carrier_index).val();
+	var carrier_code = $("#shipping_method_code"+carrier_index).val();
+    var carrier_name = $("#shipping_method_name"+carrier_index).val();
 	var carrier_cost = $("#shipping_method_cost"+carrier_index).val();
-	var params="carrier_name="+carrier_name+"&carrier_cost="+carrier_cost;
+	var params="carrier_code="+carrier_code+"&carrier_name="+carrier_name+"&carrier_cost="+carrier_cost;
 	//alert(params);
     $.ajax({
         url:"/checkout/checkout/shipping.dr",
@@ -496,7 +498,7 @@ $('#button_reward').on('click', function() {
 	$("#reward_error").hide();
 	var reward = $("#reward").val();
 	var rewardTotal = $("#rewardTotal").val();
-	if(reward>rewardTotal) {
+	if(parseInt(reward)>parseInt(rewardTotal)) {
 		$("#reward_error").html("<ul class='messages'><li class='error-msg'><ul><li><span><i class='fa fa-exclamation-triangle'></i> 사용가능한 포인트를 확인하십시요.</span></li></ul></li></ul>");
 		$("#reward_error").show();
 		return false;

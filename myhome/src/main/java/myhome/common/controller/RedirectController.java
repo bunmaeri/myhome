@@ -128,6 +128,11 @@ public class RedirectController {
 				return new ModelAndView("redirect:/books/3.dr");
 			}
 
+		} else
+		// 정보
+		if(route.equals("information/information")) {
+			String information_id = ObjectUtils.null2void(commandMap.get("information_id"));
+			return new ModelAndView("redirect:/information/"+information_id+".dr");
 		}
 		
     	return null;

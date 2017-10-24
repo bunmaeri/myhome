@@ -73,7 +73,8 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
 //	    logger.debug("= referer : " + referer);
 	    
 		String accept = request.getHeader("Accept");
-		hash.put("accept", defaultValue(accept,""));
+//		hash.put("accept", defaultValue(accept,""));
+		hash.put("accept", "");
 //	    logger.debug("= accept : " + accept);
 	    
 		String accept_language = request.getHeader("Accept-Language");

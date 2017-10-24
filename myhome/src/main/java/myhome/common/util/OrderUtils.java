@@ -61,22 +61,23 @@ public class OrderUtils {
 	}
 	
 	public String addressView(Map<String,Object> map) {
+		if(null==map) return "";
 		StringBuffer address = new StringBuffer();
 		int language_id = StoreUtil.getLanguageId();
-		String country_id = map.get("country_id").toString();
+		String country_id = ObjectUtils.null2Value(map.get("country_id"),"113");
 		// 한국어
 		if(language_id==1) {
-			if(null!=map.get("address_alias") && !map.get("address_alias").equals("")) {
+			if(!ObjectUtils.null2void(map.get("address_alias")).equals("")) {
 				address.append("<span style='color: #14328c;'>").append(map.get("address_alias")).append("</span><br/>");
 			}
-			address.append("<span style='font-size:16px'>").append(map.get("customer_name")).append("</span><br/>");
-			if(null!=map.get("company") && !map.get("company").equals("")) {
+			address.append("<span style='font-size:16px'>").append(ObjectUtils.null2void(map.get("customer_name"))).append("</span><br/>");
+			if(!ObjectUtils.null2void(map.get("company")).equals("")) {
 				address.append(map.get("company")).append("<br/>");
 			}
 			// 한국 주소
 			if(country_id.equals("113")) {
 				address.append(map.get("address_1"));
-				if(null!=map.get("address_2") && !map.get("address_2").equals("")) {
+				if(!ObjectUtils.null2void(map.get("address_2")).equals("")) {
 					address.append(" ").append(map.get("address_2"));
 				}
 				address.append("<br/>");
@@ -96,7 +97,7 @@ public class OrderUtils {
 				}
 			} else {
 				// 미국 주소
-				if(null!=map.get("address_2") && !map.get("address_2").equals("")) {
+				if(!ObjectUtils.null2void(map.get("address_2")).equals("")) {
 					address.append(map.get("address_1")).append(" ").append(map.get("address_2")).append("<br/>");
 				} else {
 					address.append(map.get("address_1")).append("<br/>");

@@ -17,6 +17,8 @@ import myhome.account.service.AccountService;
 import myhome.common.common.CommandMap;
 import myhome.common.constant.Session;
 import myhome.common.controller.BaseController;
+import myhome.common.dto.CustomerDTO;
+import myhome.common.util.ObjectUtils;
 import myhome.common.util.ScriptUtils;
 import myhome.common.util.StoreUtil;
 import myhome.product.service.ProductService;
@@ -67,7 +69,15 @@ public class WishlistController extends BaseController {
     public ModelAndView addToCart(HttpSession session, @PathVariable String product_id, @PathVariable String quantity, CommandMap commandMap) throws Exception{
     	ModelAndView mv = new ModelAndView("redirect:/account/wishlist.dr");
     	
-    	Map<String,Object> product = productService.productInfo(product_id);
+    	// 로그인 했는지 체크한다.
+    	CustomerDTO customer = (CustomerDTO) BaseController.getUserInfo(session);
+    	if(null!=customer) {
+    		commandMap.put("customer_group_id", customer.getCustomerGroupId());
+    	} else {
+    		commandMap.put("customer_group_id", "");
+    	}
+    	commandMap.put("product_id", product_id);
+//    	Map<String,Object> product = productService.productInfo(commandMap.getMap());
     	    	
     	String customer_id = BaseController.getId(session);
     	commandMap.put("customer_id", customer_id);
@@ -122,25 +132,25 @@ public class WishlistController extends BaseController {
     	if(commandMap.get("product_id") instanceof String[]) {
 //    		log.debug("commandMap.get(product_id):"+commandMap.get("product_id"));
     		String[] product_id = (String[])commandMap.get("product_id");
-	    	String[] comment = (String[])commandMap.get("comment");
+	    	//String[] comment = (String[])commandMap.get("comment");
 	    	String[] quantity = (String[])commandMap.get("quantity");
 	    	int size = product_id.length;
 	    	Map<String, Object> map = null;
 	    	for(int i=0;i<size;i++) {
 	    		map = new HashMap<String,Object>();
 	    		map.put("customer_id", customer_id);
-	    		map.put("product_id", product_id[i]);
-	    		map.put("comment", comment[i]);
-	    		map.put("quantity", quantity[i]);
+	    		map.put("product_id", ObjectUtils.null2void(product_id[i]));
+	    		map.put("comment", "");
+	    		map.put("quantity", ObjectUtils.null2Value(quantity[i],"0"));
 	    		
 	    		accountService.updateWishlist(map);
 	    	}
     	} else
 		if(commandMap.get("product_id") instanceof String) {
 			commandMap.put("customer_id", customer_id);
-			commandMap.put("product_id", commandMap.get("product_id"));
-			commandMap.put("comment", commandMap.get("comment"));
-			commandMap.put("quantity", commandMap.get("quantity"));
+			commandMap.put("product_id", ObjectUtils.null2void(commandMap.get("product_id")));
+			commandMap.put("comment", "");
+			commandMap.put("quantity", ObjectUtils.null2Value(commandMap.get("quantity"),"0"));
     		
     		accountService.updateWishlist(commandMap.getMap());
 		}

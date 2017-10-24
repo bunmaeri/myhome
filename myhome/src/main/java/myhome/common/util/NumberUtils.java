@@ -13,4 +13,12 @@ public class NumberUtils {
         return format.format(val);
     }
 
+    public static boolean isNumeric(String s) {
+    	try {
+    		Double.parseDouble(s.trim());
+    		return true;
+    	} catch(NumberFormatException e) {
+    		return false;
+    	}
+    }
 }

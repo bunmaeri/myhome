@@ -54,7 +54,7 @@ public class CartController extends BaseController {
 	 * @throws Exception
 	 */
 	@RequestMapping(value="/cart.dr")
-    public ModelAndView productInfo(HttpSession session, CommandMap commandMap) throws Exception{
+    public ModelAndView cart(HttpSession session, CommandMap commandMap) throws Exception{
     	ModelAndView mv = new ModelAndView("/checkout/cart");
 
     	// 공통코드 로드

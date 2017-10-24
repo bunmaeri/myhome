@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import myhome.common.util.NumberUtils;
 import myhome.account.service.LoginService;
 import myhome.account.service.AccountService;
 import myhome.common.common.CommandMap;
@@ -55,12 +56,33 @@ public class ProductController extends BaseController {
     public ModelAndView productInfo(HttpServletRequest request, HttpServletResponse response, @PathVariable String product_id, CommandMap commandMap) throws Exception{
     	ModelAndView mv = new ModelAndView("/product/product");
 
+    	if( NumberUtils.isNumeric( product_id ) == false ) {
+	   		 return new ModelAndView("redirect:/");
+	   	}
+    	
+    	// 로그인 했는지 체크한다.
+    	CustomerDTO customer = (CustomerDTO) BaseController.getUserInfo(request);
+    	if(null!=customer) {
+    		commandMap.put("customer_group_id", customer.getCustomerGroupId());
+    	} else {
+    		commandMap.put("customer_group_id", "");
+    	}
+    	commandMap.put("product_id", product_id);
+    	Map<String,Object> map = productService.productInfo(commandMap.getMap());
+    	if(null==map.get("map") || ObjectUtils.isEmpty(map.get("map"))) {
+    		ModelAndView emv = new ModelAndView("/product/product");
+    		emv.addObject("NO_product_id", "Y");
+    		emv.addObject("errorMsg", "더 이상 존재하지 않는 제품입니다.");
+    		BaseController.setCustomSession(request, null, Session.ERROR_MSG);
+    		return emv;
+    	}
+    	mv.addObject("info", map.get("map"));
+    	mv.addObject("NO_product_id", "N");
+    	
     	// view count PLUS
     	productService.updateProductViews(product_id);
     	
     	// Recently Viewed
-    	// 로그인 했는지 체크한다.
-    	CustomerDTO customer = (CustomerDTO) BaseController.getUserInfo(request);
 //    	String customer_id = BaseController.getId(request);
     	if(null!=customer) {
     		// Recently 목록에 있으면 업데이트
@@ -100,8 +122,8 @@ public class ProductController extends BaseController {
     	} else {
     		commandMap.put("customer_group_id", "0");
     	}
-    	Map<String,Object> map = productService.productInfo(product_id);
-    	mv.addObject("info", map.get("map"));
+//    	Map<String,Object> map = productService.productInfo(product_id);
+//    	mv.addObject("info", map.get("map"));
     	
     	if(null!=BaseController.getCustomSession(request, Session.ERROR_MSG)) {
     		mv.addObject("errorMsg", BaseController.getCustomSession(request, Session.ERROR_MSG));
@@ -119,12 +141,20 @@ public class ProductController extends BaseController {
 	 * @return
 	 * @throws Exception
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value="/account/product/add_to_cart/{product_id}/{quantity}.dr")
     public ModelAndView addToCart(HttpSession session, @PathVariable String product_id, @PathVariable String quantity, CommandMap commandMap) throws Exception{
     	ModelAndView mv = new ModelAndView("redirect:/product/{product_id}.dr");
     	
-    	@SuppressWarnings("unchecked")
-		Map<String,Object> product = (Map<String, Object>) productService.productInfo(product_id).get("map");
+    	// 로그인 했는지 체크한다.
+    	CustomerDTO customer = (CustomerDTO) BaseController.getUserInfo(session);
+    	if(null!=customer) {
+    		commandMap.put("customer_group_id", customer.getCustomerGroupId());
+    	} else {
+    		commandMap.put("customer_group_id", "");
+    	}
+    	commandMap.put("product_id", product_id);
+		Map<String,Object> product = (Map<String, Object>) productService.productInfo(commandMap.getMap()).get("map");
     	
     	// Stock 체크
     	String stock_status_id = ObjectUtils.null2void(product.get("stock_status_id"));
@@ -169,6 +199,7 @@ public class ProductController extends BaseController {
 	 * @return
 	 * @throws Exception
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value="/account/product/add_to_cart/{product_id}/{quantity}/{to}.dr")
     public ModelAndView addToCartFromAnywhere(HttpSession session, @PathVariable String product_id, @PathVariable String quantity, @PathVariable String to, CommandMap commandMap) throws Exception{
     	String[] nextUrls = to.split("_");
@@ -179,8 +210,16 @@ public class ProductController extends BaseController {
 //    	System.err.println(nextSb.toString());
 		ModelAndView mv = new ModelAndView("redirect:"+nextSb.toString()+".dr");
     	
-		@SuppressWarnings("unchecked")
-		Map<String,Object> product = (Map<String, Object>) productService.productInfo(product_id).get("map");
+		
+		// 로그인 했는지 체크한다.
+    	CustomerDTO customer = (CustomerDTO) BaseController.getUserInfo(session);
+    	if(null!=customer) {
+    		commandMap.put("customer_group_id", customer.getCustomerGroupId());
+    	} else {
+    		commandMap.put("customer_group_id", "");
+    	}
+    	commandMap.put("product_id", product_id);
+		Map<String,Object> product = (Map<String, Object>) productService.productInfo(commandMap.getMap()).get("map");
     	
 		// Stock 체크
     	String stock_status_id = ObjectUtils.null2void(product.get("stock_status_id"));

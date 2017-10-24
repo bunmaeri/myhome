@@ -37,6 +37,7 @@
           FROM my_product_to_category ptc, my_product p, my_product_description pd
          WHERE ptc.product_id = p.product_id
            AND p.product_id = pd.product_id
+           AND pd.language_id = 1
            AND ptc.category_id = #{category_id}
            AND p.status = 1
     </select>
@@ -54,6 +55,7 @@
               FROM my_product_to_category ptc, my_product p, my_product_description pd
              WHERE ptc.product_id = p.product_id
                AND p.product_id = pd.product_id
+               AND pd.language_id = 1
                AND ptc.category_id = #{category_id}
                AND p.status = 1
              ORDER BY LCASE(pd.name) ASC

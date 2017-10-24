@@ -187,8 +187,8 @@ public class AuthorizeCreditCard {
         else {
         	rtnMap.put("result", "faild");
 			rtnMap.put("errorCode", "-1");
-			rtnMap.put("errorMessage", "Null Response");
-        	System.err.println("Null Response.");
+			rtnMap.put("errorMessage", "[Null Response] 카드 결제 회사에서 승인이 완료되지 못했습니다. 해외 사용 가능한 카드인지 확인해 보시거나, 다른 카드로를 다시 시도해 보십시요.");
+        	System.err.println("Authorize.net => Null Response");
         }
         
 		return rtnMap;

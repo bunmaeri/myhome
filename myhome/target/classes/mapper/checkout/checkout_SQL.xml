@@ -84,7 +84,7 @@
                 #{title},
                 #{value},
                 #{sort_order}
-            ) ON DUPLICATE KEY UPDATE value=#{value}
+            ) ON DUPLICATE KEY UPDATE code=#{code}, title=#{title}, value=#{value}
         ]]>
     </insert>
     
@@ -333,6 +333,7 @@
               FROM my_cart c, my_product p, my_product_description pd
              WHERE c.product_id = p.product_id
                AND p.product_id = pd.product_id
+               AND pd.language_id = 1
                AND c.customer_id = #{customer_id}
              ORDER BY cart_id
                   ) m

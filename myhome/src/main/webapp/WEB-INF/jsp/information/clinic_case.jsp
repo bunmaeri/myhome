@@ -77,6 +77,7 @@ $(document).ready(function() {
     } else {
         $win.scrollTop(layerTopOffset);
     }
+    $win.scrollTop(0);
     $(window).scroll(function(){
         yPosition = $win.scrollTop() + 185;
         if (yPosition < 0) {

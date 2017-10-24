@@ -125,6 +125,7 @@
 												    <c:choose>
 												    <c:when test="${item.stock_status_id=='5'}">
 												        <p class="availability out-of-stock"><span>${item.stock_status_name}</span></p>
+												        <input type="hidden" name="quantity" id="quantity_${item.product_id}" value="${item.quantity}"/>
 												    </c:when>
 												    <c:otherwise>
 											            <div class="cart-qty-container">

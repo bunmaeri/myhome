@@ -16,8 +16,8 @@ public class ProductDAO extends AbstractDAO {
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public Map<String, Object> productInfo(String product_id) throws Exception{
-		return (Map<String, Object>) selectOne("product.productInfo", product_id);
+	public Map<String, Object> productInfo(Map<String, Object> map) throws Exception{
+		return (Map<String, Object>) selectOne("product.productInfo", map);
 	}
 	
 	/**

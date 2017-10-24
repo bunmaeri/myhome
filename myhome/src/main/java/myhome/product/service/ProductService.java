@@ -10,7 +10,7 @@ public interface ProductService {
 	 * @return
 	 * @throws Exception
 	 */
-	Map<String, Object> productInfo(String product_id) throws Exception;
+	Map<String, Object> productInfo(Map<String, Object> map) throws Exception;
 	
 	/**
 	 * 제품 Views 수 증가

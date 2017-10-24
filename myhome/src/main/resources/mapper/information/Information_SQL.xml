@@ -46,6 +46,7 @@
                AND pd.language_id = #{language_id}
                AND idcm.status = '1'
                AND p.status = '1'
+             ORDER BY pd.name ASC
         ]]>
     </select>
     

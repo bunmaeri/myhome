@@ -108,6 +108,11 @@ public class LoginController {
             	emv.addObject("errorMsg", "비밀번호를 입력해 주십시오!"); 
             	emv.addObject("notice", map);
 				return emv;
+            } else
+        	if(ObjectUtils.null2void(customer.getStatus()).equals("0")) {
+        		emv.addObject("email", ObjectUtils.null2void(commandMap.get("email")));
+            	emv.addObject("errorMsg", "사용이 중지된 이메일입니다!"); 
+			    return emv;
             } else {
             	if(!CommonUtils.shaMatches(dbPwd, inPwd)) {
                 	emv.addObject("email", ObjectUtils.null2void(commandMap.get("email")));

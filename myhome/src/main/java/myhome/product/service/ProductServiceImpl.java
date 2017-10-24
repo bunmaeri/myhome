@@ -22,9 +22,9 @@ public class ProductServiceImpl implements ProductService {
 	 * 제품 정보 조회
 	 */
 	@Override
-	public Map<String, Object> productInfo(String product_id) throws Exception {
+	public Map<String, Object> productInfo(Map<String, Object> map) throws Exception {
 		Map<String, Object> resultMap = new HashMap<String,Object>();
-		Map<String, Object> tempMap = productDAO.productInfo(product_id);
+		Map<String, Object> tempMap = productDAO.productInfo(map);
 		if(null!=tempMap) {
 			tempMap.put("description", StringEscapeUtils.unescapeHtml(ObjectUtils.null2void(tempMap.get("description"))));
 			tempMap.put("location_name", productDAO.location(ObjectUtils.null2void(tempMap.get("location"))));

@@ -158,6 +158,7 @@
                     WHERE cw.product_id = p.product_id
                       AND p.product_id = pd.product_id
                       AND p.model = pq.model
+                      AND pd.language_id = 1
                       AND cw.customer_id = #{customer_id}
                    ) m, dr_stock_status ss
             WHERE m.stock_status_id = ss.stock_status_id

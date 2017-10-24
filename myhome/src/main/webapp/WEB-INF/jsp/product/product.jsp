@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="/WEB-INF/include/header.jspf" %>
 
+<c:choose>
+<c:when test="${NO_product_id=='N'}">
 <div id="global-messages" class="container-fluid"></div>
 <div class="main padding-top50" role="main">
     <script type="text/javascript">
@@ -149,6 +151,22 @@
 </script>
     </div>
 </div>
+</c:when>
+<c:otherwise>
+<div id="global-messages" class="container-fluid"></div>
+<div class="main padding-top50" role="main">
+    <div class="container-fluid">
+        <div id="messages_product_view"></div>
+    </div>
+    <div class="product-view simple">
+        <div class="container-fluid product-essential">
+        ${ctag:getErrorString(errorMsg)}
+        </div>
+    </div>
+</div>
+</c:otherwise>
+</c:choose>
+
 <div id="floatR">
     <div id="floatMenu">
       <div id="floatMenuTitle">
@@ -192,6 +210,7 @@ $(document).ready(function() {
     } else {
         $win.scrollTop(layerTopOffset);
     }
+    $win.scrollTop(0);
     $(window).scroll(function(){
         yPosition = $win.scrollTop() + 185;
         if (yPosition < 0) {
