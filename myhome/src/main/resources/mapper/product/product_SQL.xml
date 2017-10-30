@@ -12,8 +12,10 @@
                    pd.meta_title,
                    pd.meta_description,
                    pd.meta_keyword,
+                   pq.stock_status_id,
                   (SELECT ps.price FROM my_product_special ps WHERE ps.product_id = p.product_id AND ps.customer_group_id IN('0',#{customer_group_id}) AND ((ps.date_start = '0000-00-00' OR ps.date_start < NOW()) AND (ps.date_end = '0000-00-00' OR ps.date_end > NOW())) ORDER BY ps.priority ASC, ps.price ASC LIMIT 1) AS special
               FROM my_product p LEFT JOIN my_product_description pd ON (p.product_id = pd.product_id)
+                   LEFT JOIN product_quantity pq ON (p.model = pq.model)
              WHERE p.product_id = #{product_id}
                AND pd.language_id = 1
         ]]>
@@ -126,12 +128,11 @@
                pd.description,
                p.model,
               (SELECT m.name FROM dr_manufacturer m WHERE m.manufacturer_id = p.manufacturer_id) AS manufacturer_name,
-               CASE WHEN (SELECT pq.quantity FROM product_quantity pq WHERE pq.model=p.model)>0 THEN '재고있음'
-                    ELSE '재고부족'
-                    END AS availability,
+              (SELECT ss.name FROM dr_stock_status ss WHERE ss.stock_status_id = pq.stock_status_id AND ss.language_id=#{language_id}) AS availability,
                p.weight
           FROM my_product p
                LEFT JOIN my_product_description pd ON (p.product_id = pd.product_id)
+               LEFT JOIN product_quantity pq ON (p.model = pq.model)
          WHERE pd.language_id = #{language_id} 
            AND p.status = '1'
            AND p.product_id IN

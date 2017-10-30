@@ -169,8 +169,8 @@
                                <div class="drop-down">
                                    <ul class="level0 products">
                                        <li  class="level1 nav-1-1 parent">
-                                            <a href="/products/category/3.dr" ><span>자연의학 전문 제품</span></a>
-                                            <div class="drop-down">
+                                            <a href="/products/category/3.dr" class=""><span>자연의학 전문 제품</span></a>
+                                            <div class="drop-down visible-md">
                                                 <ul class="level1">
                                                     <li class="level2 nav-1-1-1 first"><a href="/products/category/3.dr" ><span>전체 제품</span></a></li>
                                                 </ul>

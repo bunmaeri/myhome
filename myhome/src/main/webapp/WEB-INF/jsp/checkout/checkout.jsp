@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="/WEB-INF/include/header.jspf" %>
 
+<div class="overlay" style="top:0;height:0"></div>
 <div id="global-messages" class="container-fluid"></div>
 <div class="main" role="main">
 <form action="/checkout/checkout.dr" method="post" id="form" class="form-horizontal">
@@ -552,6 +553,8 @@ $('#button_submit').on('click', function() {
         dataType: 'json',
         beforeSend: function(xmlHttpRequest) {
         	$('.wrap-loading').removeClass('display-none');
+        	$(".overlay").css("top","0");
+            $(".overlay").css("height",$(document).height());
         	xmlHttpRequest.setRequestHeader("AJAX","true");
             $('#button_submit').prop('disabled', true);
         },
@@ -570,6 +573,8 @@ $('#button_submit').on('click', function() {
             } else
             if(json.Message.error) {
             	$('.wrap-loading').addClass('display-none');
+            	$(".overlay").css("top","0");
+                $(".overlay").css("height", "0");
             	if (json.Message.error) {
             		$("#shopping-cart-div").after("<ul class='messages'><li class='error-msg'><ul><li><span><i class='fa fa-exclamation-triangle'></i> " + json.Message.errorMessage + "</span></li></ul></li></ul>");
             	}

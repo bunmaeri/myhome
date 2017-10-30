@@ -846,6 +846,8 @@ public class CheckoutController extends BaseController {
 		    		validMap.put("error", "error");
 		    		validMap.put("errorMessage", rtnMap.get("errorMessage"));
 					mv.addObject("Message", validMap);
+				
+					return mv;
 		    	}
 		    } else {
 		    	/**
@@ -857,6 +859,125 @@ public class CheckoutController extends BaseController {
             }
             // 주문 History 생성을 위해 세션에 저장한다. -> confirm에서 처리
     		BaseController.setCustomSession(session, historyMap, Session.ORDER_HISTORY_DATA);
+    		
+    		// 공통코드
+//    		CodeController code = new CodeController();
+    		
+    		// 세션 고객 정보
+//        	CustomerDTO customer = BaseController.getUserInfo(session);
+//        	String customer_id = customer.getId();
+//        	
+        	// 주문번호
+//    		String order_id = ObjectUtils.null2void(BaseController.getCustomSession(session, Session.ORDER_ID));
+    		
+    		/**
+    		 * 1. Order Total 테이블 생성
+    		 */
+    		commandMap.put("customer_id", customer_id);
+    		commandMap.put("order_id", order_id);
+    	    checkoutService.addOrderTotal(commandMap.getMap());
+    	    
+    		/**
+    		 * 2. 주문 History 생성
+    		 */
+    		Map<String,Object> iHistoryMap = (Map<String, Object>) BaseController.getCustomSession(session, Session.ORDER_HISTORY_DATA);
+    		checkoutService.addOrderHistory(iHistoryMap);
+    		
+    		/**
+    		 * 3. 주문 제품 테이블 생성
+    		 */
+    		Map<String,Object> map = new HashMap<String,Object>();
+    		map.put("customer_id", customer_id);
+    		map.put("order_id", order_id);
+    		String rate = "0";
+    		if(BaseController.isExsit(session, Session.CHECKOUT_TAX_RATE)) {
+    			rate = ObjectUtils.null2Value(BaseController.getCustomSession(session, Session.CHECKOUT_TAX_RATE),"0");
+    		}
+    		map.put("rate", rate);
+    		map.put("config_default_reward", code.getValue("config_default_reward"));
+    		// 총합계
+        	if(null!=customer && null!=customer.getCustomerGroupId() && !customer.getCustomerGroupId().equals("")) {
+        		map.put("customer_group_id", customer.getCustomerGroupId());
+        	} else {
+        		map.put("customer_group_id", "0");
+        	}
+    		checkoutService.addOrderProduct(map);
+    	
+    		/**
+    		 * 4. 제품 수량 마이너스
+    		 */
+    		List<Map<String,Object>> orderProductList = accountService.orderProductList(commandMap.getMap());
+    		Map<String,Object> orderProductMap = null;
+    		size = orderProductList.size();
+    		for(int i=0;i<size;i++) {
+    			orderProductMap = orderProductList.get(i);
+    			/**
+    			 * 제품 수량 마이너스
+    			 * 제품 수량 조회해서 0이면 재고 상태코드를 5(재고 없음)으로 업데이트
+    			 * 제품 수량이 0보다 작으면 재고 상태코드를 5(재고 없음)으로 업데이트하고 제품 수량을 0으로 셋팅
+    			 */
+    			checkoutService.updateProductQuantity(orderProductMap);
+    		}
+    	
+    		/**
+    		 * 5. 고객 적립금 사용 이력 추가
+    		 */
+    		map.put("description", "Order ID: #"+order_id);
+    		checkoutService.addCustomerReward(map);
+    		
+    		/**
+    		 * 6. 장바구니 클리어
+    		 */
+    		checkoutService.deleteCart(customer_id);
+    		
+    		/**
+    		 * 7. 장바구니 주문 합계 테이블 클리어
+    		 */
+    		checkoutService.deleteCartOrderTotal(customer_id);
+    	
+    		/**
+    		 * 8. 화면에 보여줄 정보
+    		 */
+        	Map<String,Object> orderViewMap = accountService.orderInfo(commandMap.getMap());
+        	
+        	Map<String,Object> info = (Map<String,Object>) orderViewMap.get("info");
+        	OrderUtils outil = new OrderUtils();
+        	info.put("order_status_name", outil.orderStatusName(info.get("order_status_id").toString()));
+        	info.put("payment_address", outil.orderHistoryAddress("payment_", info));
+        	info.put("shipping_address", outil.orderHistoryAddress("shipping_", info));
+//        	
+//        	mv.addObject("info", info);
+//        	mv.addObject("products", orderViewMap.get("products"));
+//        	mv.addObject("totals", orderViewMap.get("totals"));
+////        	mv.addObject("histories", orderViewMap.get("histories"));
+//    		
+//        	ScriptUtils.accountScript(mv);
+    	
+        	/**
+    		 * 9. 고객에게 주문완료 이메일 보내기
+    		 */
+        	Map<String,Object> emailMap = new HashMap<String,Object>();
+        	emailMap.put("info", info);
+        	emailMap.put("products", orderViewMap.get("products"));
+        	emailMap.put("totals", orderViewMap.get("totals"));
+        	emailMap.put("histories", orderViewMap.get("histories"));
+        	String html = OrderEmail.getHtml(emailMap);
+//        	System.err.println(html);
+        	
+    		commandMap.put("subject", code.getValue("config_comapny_name")+" 주문번호: "+order_id);
+    		commandMap.put("html", html);
+    		commandMap.put("recipient_name", customer.getCustomerName());
+    		commandMap.put("recipient_email", customer.getEmail());
+    		MailChimpEmail.run(commandMap.getMap());
+    		
+    		/**
+    		 * 10. 네이버로 주문완료 이메일 보내기
+    		 */
+        	commandMap.put("subject", code.getValue("config_comapny_name")+" - 주문번호: "+order_id);
+    		commandMap.put("html", html);
+    		commandMap.put("recipient_name", code.getValue("config_comapny_name"));
+    		commandMap.put("recipient_email", code.getValue("config_company_email"));
+    		MailChimpEmail.run(commandMap.getMap());
 		} else {
 			validMap.put("error", "error");
 			validMap.put("errorMessage", CheckoutLanguage.Error.errorMessage);
@@ -912,6 +1033,56 @@ public class CheckoutController extends BaseController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value="/checkout/confirm.dr")
     public ModelAndView confrim(HttpSession session, CommandMap commandMap) throws Exception{
+		ModelAndView mv = new ModelAndView("/checkout/confirm");
+		
+		// 주문번호
+		String order_id = ObjectUtils.null2void(BaseController.getCustomSession(session, Session.ORDER_ID));
+		commandMap.put("order_id", order_id);
+				
+		/**
+		 * 화면에 보여줄 정보
+		 */
+    	Map<String,Object> orderViewMap = accountService.orderInfo(commandMap.getMap());
+    	
+    	Map<String,Object> info = (Map<String,Object>) orderViewMap.get("info");
+    	OrderUtils outil = new OrderUtils();
+    	info.put("order_status_name", outil.orderStatusName(info.get("order_status_id").toString()));
+    	info.put("payment_address", outil.orderHistoryAddress("payment_", info));
+    	info.put("shipping_address", outil.orderHistoryAddress("shipping_", info));
+    	
+    	mv.addObject("info", info);
+    	mv.addObject("products", orderViewMap.get("products"));
+    	mv.addObject("totals", orderViewMap.get("totals"));
+//    	mv.addObject("histories", orderViewMap.get("histories"));
+		
+    	ScriptUtils.accountScript(mv);
+    	
+    	/**
+		 * 11. 세션 클리어
+		 */
+		BaseController.removeCustomSession(session, Session.IS_CART_ERROR);
+    	BaseController.removeCustomSession(session, Session.CART_OVER_LIMIT);
+    	BaseController.removeCustomSession(session, Session.CART_OUT_OF_STOCK);
+    	BaseController.removeCustomSession(session, Session.CHECKOUT_SHIPPING_ADDRESS);
+    	BaseController.removeCustomSession(session, Session.CHECKOUT_SHIPPING_METHOD);
+    	BaseController.removeCustomSession(session, Session.CHECKOUT_IS_TAX);
+    	BaseController.removeCustomSession(session, Session.CHECKOUT_TAX_RATE);
+		BaseController.removeCustomSession(session, Session.ORDER_ID);
+		BaseController.removeCustomSession(session, Session.ORDER_HISTORY_DATA);
+		BaseController.setCustomSession(session, null, Session.CART);
+    	
+    	return mv;
+	}
+	
+	/**
+	 * 결제 완료 후 처리 (예전 버전...)
+	 * @param commandMap
+	 * @return
+	 * @throws Exception
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value="/checkout/confirm_old.dr")
+    public ModelAndView confrim_old(HttpSession session, CommandMap commandMap) throws Exception{
 		ModelAndView mv = new ModelAndView("/checkout/confirm");
 		
 		// 공통코드

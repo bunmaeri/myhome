@@ -147,10 +147,7 @@
                           cw.comment,
                           pd.name,
                           p.model,
-                          CASE WHEN pq.quantity<=0 THEN 5
-                               WHEN pq.quantity>0 THEN 7
-                               ELSE p.stock_status_id
-                               END AS stock_status_id,
+                          pq.stock_status_id,
                           p.image,
                           p.price,
                          (SELECT m.name FROM dr_manufacturer m WHERE p.manufacturer_id=m.manufacturer_id) AS manufacturer_name
